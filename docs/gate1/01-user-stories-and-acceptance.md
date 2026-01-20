@@ -213,7 +213,7 @@ This document contains a set of **15 user stories** with **testable acceptance c
 - Required fields must be present
 - UK postcode must be valid format
 - UK licence number must match format
-- Age rule: outside 21–75 → warning or error (defined)
+- Age rule: outside 21–75 → warning
 
 **Acceptance Criteria**
 - Submission is blocked if any required field is missing

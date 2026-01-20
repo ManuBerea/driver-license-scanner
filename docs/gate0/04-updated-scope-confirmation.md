@@ -28,7 +28,7 @@ The POC **will include**:
 - Required fields enforced
 - UK postcode format validation
 - UK license number format validation
-- Age rule (21–75) implemented consistently (warn or block per definition)
+- Age rule (21–75) implemented consistently (warning)
 
 ### E) Deployment & documentation
 - Deployment to a **public staging environment**
