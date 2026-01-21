@@ -1,0 +1,149 @@
+{
+  "info": {
+    "name": "Driver License Scanner",
+    "_postman_id": "0f3b1e8e-0000-4d5a-9000-000000000000",
+    "description": "Import this collection into Postman and run the requests or use the Collection Runner.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrlWeb",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "baseUrlApi",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "baseUrlOcr",
+      "value": "http://localhost:8000"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Checks",
+      "item": [
+        {
+          "name": "Web - Root",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrlWeb}}/",
+              "host": [
+                "{{baseUrlWeb}}"
+              ],
+              "path": [
+                ""
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Basic smoke check: response body should not be empty",
+                  "pm.test('Body is not empty', function () {",
+                  "  pm.expect(pm.response.text().length).to.be.above(0);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "API - Actuator Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrlApi}}/actuator/health",
+              "host": [
+                "{{baseUrlApi}}"
+              ],
+              "path": [
+                "actuator",
+                "health"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Try to parse JSON safely and check for a health status",
+                  "var body = null;",
+                  "try { body = pm.response.json(); } catch (e) { body = null; }",
+                  "if (body && body.status) {",
+                  "  pm.test('Health status is UP or ok', function() {",
+                  "    pm.expect(['UP','OK','ok','up']).to.include(String(body.status));",
+                  "  });",
+                  "} else {",
+                  "  pm.test('Response contains JSON body with a status field', function() {",
+                  "    pm.expect(body).to.not.equal(null);",
+                  "  });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "OCR Worker - /health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrlOcr}}/health",
+              "host": [
+                "{{baseUrlOcr}}"
+              ],
+              "path": [
+                "health"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "var body = null;",
+                  "try { body = pm.response.json(); } catch (e) { body = null; }",
+                  "if (body && body.status) {",
+                  "  pm.test('Worker health status is ok or UP', function() {",
+                  "    pm.expect(['ok','OK','up','UP']).to.include(String(body.status));",
+                  "  });",
+                  "} else {",
+                  "  pm.test('Response should contain JSON body', function() {",
+                  "    pm.expect(body).to.not.equal(null);",
+                  "  });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

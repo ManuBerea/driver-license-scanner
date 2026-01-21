@@ -10,17 +10,17 @@ Each entry should correspond to a real usage of AI for implementation, debugging
 ## Rules
 - **No direct AI output committed without review**.
 - Never paste secrets, keys, or real PII into prompts.
-- Avoid sharing full licence images or OCR text unless fully synthetic.
+- Avoid sharing full license images or OCR text unless fully synthetic.
 - Summarize outcomes and modifications so future readers can trust the work.
 
 ---
 
-### Prompt-T1 — Create monorepo baseline
+### Prompt-1 — T1: Create monorepo baseline
 **Context**  
 Needed a scalable monorepo layout that supports Web/API/OCR worker.
 
 **What I asked**  
-[Prompt-T1 — Create monorepo baseline](03-prompts-used.md)
+[Prompt-T1 — Create monorepo baseline](../AI-context-docs/codex-prompts-used.md)
 
 **What AI suggested**  
 - Monorepo with `web/`, `driver-license-scanner-api/`, `ocr-worker/`
@@ -37,15 +37,24 @@ Needed a scalable monorepo layout that supports Web/API/OCR worker.
 
 ---
 
-## Template for future entries (copy/paste)
-
-### Prompt-T1 — <short title>
+### Prompt-2 — Align T1/T2 tickets to baseline
 **Context**  
+Finalizing tickets T1/T2 (monorepo baseline + compose bring-up) with stubbed worker health endpoints and DSL-friendly configs.
 
 **What I asked**  
+[Prompt T1 + T2](../AI-context-docs/codex-prompts-used.md)
 
 **What AI suggested**  
+- Clean `.gitignore` covering python/node/java artifacts
+- Dockerfiles per service + minimal OCR worker endpoints
+- Docker Compose wiring web/api/worker with ports and fake env defaults
+- Health actuator exposure in Spring Boot
 
 **What I kept**  
+- Service-specific Dockerfiles and Compose wiring
+- FastAPI `/health` stub + security guardrails
+- Actuator health exposure (YAML) for API health checks
 
-**What I changed and why**
+**What I changed and why**  
+- Removed `/ocr` stub to keep scope limited to T1/T2
+- Migrated Spring config from `application.properties` to `application.yml` as requested

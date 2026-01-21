@@ -35,6 +35,6 @@ This folder contains the SDLC gate deliverables for the Driver License OCR POC.
 
 - [Clean module boundaries (OCR / Parser / Validator)](gate4/01-module-boundaries.md)
 - [Prompt log (asked / kept / changed / why)](gate4/02-prompt-log.md)
-- [Prompts used](gate4/03-prompts-used.md)
+- [Prompts used](AI-context-docs/codex-prompts-used.md)
 
 ---
