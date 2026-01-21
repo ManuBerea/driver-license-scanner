@@ -1,0 +1,33 @@
+services:
+  web:
+    build: ./web
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8080
+    depends_on:
+      - api
+    volumes:
+      - ./web:/app
+      - /app/node_modules
+
+  api:
+    build: ./driver-license-scanner-api
+    ports:
+      - "8080:8080"
+    environment:
+      OCR_WORKER_URL: http://ocr-worker:8000
+      X_INTERNAL_KEY: dev-internal-key
+      ENABLE_FALLBACK_OCR: "false"
+      OCR_CONFIDENCE_WARN_THRESHOLD: "0.70"
+    depends_on:
+      - ocr-worker
+
+  ocr-worker:
+    build: ./ocr-worker
+    ports:
+      - "8000:8000"
+    environment:
+      X_INTERNAL_KEY: dev-internal-key
+      OCR_ENGINE: stub
+    command: ["uvicorn", "main:application", "--host", "0.0.0.0", "--port", "8000"]
