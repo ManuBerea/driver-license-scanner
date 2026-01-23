@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, type ChangeEventHandler, type DragEvent, type RefObject } from "react";
 
 import { formatBytes } from "@/lib/imageUtils";

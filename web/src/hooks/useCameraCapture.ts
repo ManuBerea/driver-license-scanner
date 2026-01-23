@@ -1,3 +1,5 @@
+"use client";
+
 import {useCallback, useEffect, useRef, useState, type RefObject} from "react";
 
 import {MAX_CAPTURE_DIMENSION} from "@/lib/imageUtils";

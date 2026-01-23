@@ -1,3 +1,5 @@
+"use client";
+
 import {useEffect, useMemo, useState} from "react";
 
 import { UK_LICENSE_ASPECT_RATIO, formatBytes } from "@/lib/imageUtils";
