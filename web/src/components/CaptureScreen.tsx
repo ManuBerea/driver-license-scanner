@@ -2,15 +2,17 @@
 
 import {useRef, useState, type ChangeEvent} from "react";
 
-import {CameraPanel} from "@/components/CameraPanel";
-import {UploadPanel} from "@/components/UploadPanel";
-import {useCameraCapture} from "@/hooks/useCameraCapture";
-import {validateImageFile} from "@/lib/imageUtils";
+import { CameraPanel } from "@/components/CameraPanel";
+import { PreviewPanel } from "@/components/PreviewPanel";
+import { UploadPanel } from "@/components/UploadPanel";
+import { useCameraCapture } from "@/hooks/useCameraCapture";
+import { validateImageFile } from "@/lib/imageUtils";
 
 export default function CaptureScreen() {
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const [hasContinued, setHasContinued] = useState(false);
+    const [flowStep, setFlowStep] = useState<"capture" | "preview">("capture");
+    const [scanRequested, setScanRequested] = useState(false);
 
     const uploadInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -28,8 +30,10 @@ export default function CaptureScreen() {
 
     const resetSelection = () => {
         setSelectedImage(null);
-        setHasContinued(false);
         setError(null);
+        setScanRequested(false);
+        setFlowStep("capture");
+        stopCamera();
 
         // allows re-selecting the same file
         if (uploadInputRef.current) {
@@ -39,8 +43,9 @@ export default function CaptureScreen() {
 
     const selectImage = (file: File) => {
         setSelectedImage(file);
-        setHasContinued(false);
         setError(null);
+        setScanRequested(false);
+        setFlowStep("preview");
 
         // If we captured from camera, close it to avoid leaving it running
         if (isCameraActive) {
@@ -55,8 +60,9 @@ export default function CaptureScreen() {
         const validationError = validateImageFile(file);
         if (validationError) {
             setSelectedImage(null);
-            setHasContinued(false);
             setError(validationError);
+            setScanRequested(false);
+            setFlowStep("capture");
             if (uploadInputRef.current) {
                 uploadInputRef.current.value = "";
             }
@@ -84,12 +90,13 @@ export default function CaptureScreen() {
         handleFileSelected(result.file);
     };
 
-    const handleContinue = () => {
+    const handleScan = () => {
         if (!selectedImage) {
-            setError("Please upload or capture an image before continuing.");
+            setError("Please upload or capture an image before scanning.");
             return;
         }
-        setHasContinued(true);
+        setError(null);
+        setScanRequested(true);
     };
 
     const handleStartStop = async () => {
@@ -100,6 +107,18 @@ export default function CaptureScreen() {
             return;
         }
 
+        const result = await startCamera();
+        if (!result.ok && result.error !== "Camera start was canceled.") {
+            setError(result.error);
+        }
+    };
+
+    const handleChooseAnother = () => {
+        resetSelection();
+    };
+
+    const handleRetake = async () => {
+        resetSelection();
         const result = await startCamera();
         if (!result.ok && result.error !== "Camera start was canceled.") {
             setError(result.error);
@@ -130,45 +149,38 @@ export default function CaptureScreen() {
                     </div>
                 )}
 
-                <div className="grid gap-6 md:grid-cols-2">
-                    <UploadPanel
-                        selectedImage={selectedImage}
-                        onFileChange={handleFileChange}
-                        inputRef={uploadInputRef}
-                        onClearSelection={resetSelection}
-                        onFileSelect={handleFileSelected}
+                {flowStep === "capture" && (
+                    <div className="grid gap-6 md:grid-cols-2">
+                        <UploadPanel
+                            selectedImage={selectedImage}
+                            onFileChange={handleFileChange}
+                            inputRef={uploadInputRef}
+                            onClearSelection={resetSelection}
+                            onFileSelect={handleFileSelected}
+                        />
+
+                        <CameraPanel
+                            isCameraActive={isCameraActive}
+                            isVideoReady={isVideoReady}
+                            isStartingCamera={isStartingCamera}
+                            onStartStop={handleStartStop}
+                            onCapture={handleCapture}
+                            videoRef={videoRef}
+                            canvasRef={canvasRef}
+                            onVideoReady={markVideoReady}
+                        />
+                    </div>
+                )}
+
+                {flowStep === "preview" && selectedImage && (
+                    <PreviewPanel
+                        file={selectedImage}
+                        onChooseAnother={handleChooseAnother}
+                        onRetake={handleRetake}
+                        onScan={handleScan}
+                        scanRequested={scanRequested}
                     />
-
-                    <CameraPanel
-                        isCameraActive={isCameraActive}
-                        isVideoReady={isVideoReady}
-                        isStartingCamera={isStartingCamera}
-                        onStartStop={handleStartStop}
-                        onCapture={handleCapture}
-                        videoRef={videoRef}
-                        canvasRef={canvasRef}
-                        onVideoReady={markVideoReady}
-                    />
-                </div>
-
-                <div
-                    className="flex flex-col items-start gap-3 rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-sm backdrop-blur">
-                    <button
-                        type="button"
-                        className="rounded-full bg-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-emerald-300"
-                        onClick={handleContinue}
-                        disabled={!selectedImage}
-                    >
-                        Continue
-                    </button>
-
-                    {hasContinued && selectedImage && (
-                        <div className="text-sm text-slate-700">
-                            Ready to continue with:{" "}
-                            <span className="font-semibold">{selectedImage.name}</span>
-                        </div>
-                    )}
-                </div>
+                )}
             </main>
         </div>
     );

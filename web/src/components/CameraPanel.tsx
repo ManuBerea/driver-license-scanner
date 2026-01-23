@@ -38,6 +38,7 @@ export function CameraPanel({
                     <video
                         ref={videoRef}
                         onLoadedMetadata={onVideoReady}
+                        onCanPlay={onVideoReady}
                         className="h-full w-full object-cover"
                         playsInline
                         muted
