@@ -1,6 +1,6 @@
-import type { RefObject } from "react";
+import type {RefObject} from "react";
 
-import { UK_LICENSE_ASPECT_RATIO } from "@/lib/imageUtils";
+import {UK_LICENSE_ASPECT_RATIO} from "@/lib/imageUtils";
 
 type CameraPanelProps = {
     isCameraActive: boolean;
@@ -24,7 +24,8 @@ export function CameraPanel({
                                 onVideoReady,
                             }: CameraPanelProps) {
     return (
-        <section className="flex h-full flex-col gap-5 rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-sm backdrop-blur">
+        <section
+            className="flex h-full flex-col gap-5 rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-sm backdrop-blur">
             <div className="flex flex-col gap-2">
                 <h2 className="text-lg font-semibold text-slate-900">Use your camera</h2>
                 <p className="text-sm text-slate-600">
@@ -33,7 +34,7 @@ export function CameraPanel({
             </div>
 
             <div className="relative w-full overflow-hidden rounded-2xl border border-slate-200 bg-slate-900">
-                <div className="relative w-full" style={{ aspectRatio: UK_LICENSE_ASPECT_RATIO }}>
+                <div className="relative w-full" style={{aspectRatio: UK_LICENSE_ASPECT_RATIO}}>
                     <video
                         ref={videoRef}
                         onLoadedMetadata={onVideoReady}
@@ -42,7 +43,8 @@ export function CameraPanel({
                         muted
                     />
                     {!isCameraActive && (
-                        <div className="absolute inset-0 grid place-items-center px-6 text-center text-sm text-slate-200">
+                        <div
+                            className="absolute inset-0 grid place-items-center px-6 text-center text-sm text-slate-200">
                             {isStartingCamera
                                 ? "Starting camera..."
                                 : "Camera is off. Press Start camera to begin."}
@@ -71,7 +73,7 @@ export function CameraPanel({
                 </button>
             </div>
 
-            <canvas ref={canvasRef} className="hidden" />
+            <canvas ref={canvasRef} className="hidden"/>
         </section>
     );
 }

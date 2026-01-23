@@ -1,6 +1,6 @@
-import type { ChangeEventHandler, RefObject } from "react";
+import type {ChangeEventHandler, RefObject} from "react";
 
-import { formatBytes } from "@/lib/imageUtils";
+import {formatBytes} from "@/lib/imageUtils";
 
 type UploadPanelProps = {
     selectedImage: File | null;
@@ -16,7 +16,8 @@ export function UploadPanel({
                                 onClearSelection,
                             }: UploadPanelProps) {
     return (
-        <section className="flex h-full flex-col gap-5 rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-sm backdrop-blur">
+        <section
+            className="flex h-full flex-col gap-5 rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-sm backdrop-blur">
             <div className="flex flex-col gap-2">
                 <h2 className="text-lg font-semibold text-slate-900">Upload an image</h2>
                 <p className="text-sm text-slate-600">

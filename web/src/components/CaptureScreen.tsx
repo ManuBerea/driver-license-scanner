@@ -1,11 +1,11 @@
 "use client";
 
-import { useRef, useState, type ChangeEvent } from "react";
+import {useRef, useState, type ChangeEvent} from "react";
 
-import { CameraPanel } from "@/components/CameraPanel";
-import { UploadPanel } from "@/components/UploadPanel";
-import { useCameraCapture } from "@/hooks/useCameraCapture";
-import { validateImageFile } from "@/lib/imageUtils";
+import {CameraPanel} from "@/components/CameraPanel";
+import {UploadPanel} from "@/components/UploadPanel";
+import {useCameraCapture} from "@/hooks/useCameraCapture";
+import {validateImageFile} from "@/lib/imageUtils";
 
 export default function CaptureScreen() {
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -45,6 +45,9 @@ export default function CaptureScreen() {
         // If we captured from camera, close it to avoid leaving it running
         if (isCameraActive) {
             stopCamera();
+        }
+        if (uploadInputRef.current) {
+            uploadInputRef.current.value = "";
         }
     };
 
@@ -107,9 +110,12 @@ export default function CaptureScreen() {
     };
 
     return (
-        <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-amber-50 via-white to-sky-50 text-slate-900">
-            <div className="pointer-events-none absolute -top-24 right-0 h-64 w-64 rounded-full bg-amber-200/40 blur-3xl" />
-            <div className="pointer-events-none absolute -bottom-24 left-0 h-64 w-64 rounded-full bg-sky-200/40 blur-3xl" />
+        <div
+            className="relative min-h-screen overflow-hidden bg-gradient-to-br from-amber-50 via-white to-sky-50 text-slate-900">
+            <div
+                className="pointer-events-none absolute -top-24 right-0 h-64 w-64 rounded-full bg-amber-200/40 blur-3xl"/>
+            <div
+                className="pointer-events-none absolute -bottom-24 left-0 h-64 w-64 rounded-full bg-sky-200/40 blur-3xl"/>
 
             <main className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-10 md:px-10">
                 <header className="flex flex-col gap-2">
@@ -147,7 +153,8 @@ export default function CaptureScreen() {
                     />
                 </div>
 
-                <div className="flex flex-col items-start gap-3 rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-sm backdrop-blur">
+                <div
+                    className="flex flex-col items-start gap-3 rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-sm backdrop-blur">
                     <button
                         type="button"
                         className="rounded-full bg-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-emerald-300"

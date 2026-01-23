@@ -1,5 +1,5 @@
 import CaptureScreen from "@/components/CaptureScreen";
 
 export default function Page() {
-    return <CaptureScreen />;
+    return <CaptureScreen/>;
 }

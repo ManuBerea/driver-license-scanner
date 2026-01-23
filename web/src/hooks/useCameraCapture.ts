@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
+import {useCallback, useEffect, useRef, useState, type RefObject} from "react";
 
-import { MAX_CAPTURE_DIMENSION } from "@/lib/imageUtils";
+import {MAX_CAPTURE_DIMENSION} from "@/lib/imageUtils";
 
 type CameraStartResult = { ok: true } | { ok: false; error: string };
 type CaptureResult = { ok: true; file: File } | { ok: false; error: string };
@@ -61,27 +61,28 @@ export function useCameraCapture(): CameraCaptureState {
 
     const startCamera = useCallback(async (): Promise<CameraStartResult> => {
         if (isStartingCamera) {
-            return { ok: false, error: "Camera is already starting." };
+            return {ok: false, error: "Camera is already starting."};
         }
 
         const requestId = requestIdRef.current + 1;
         requestIdRef.current = requestId;
 
         setIsStartingCamera(true);
+        setIsVideoReady(false);
 
         try {
             if (!navigator.mediaDevices?.getUserMedia) {
-                return { ok: false, error: "This browser does not support camera access." };
+                return {ok: false, error: "This browser does not support camera access."};
             }
 
             const stream = await navigator.mediaDevices.getUserMedia({
-                video: { facingMode: "environment" },
+                video: {facingMode: "environment"},
                 audio: false,
             });
 
             if (!mountedRef.current || requestId !== requestIdRef.current) {
                 stream.getTracks().forEach((track) => track.stop());
-                return { ok: false, error: "Camera start was canceled." };
+                return {ok: false, error: "Camera start was canceled."};
             }
 
             streamRef.current = stream;
@@ -89,7 +90,7 @@ export function useCameraCapture(): CameraCaptureState {
             const video = videoRef.current;
             if (!video) {
                 stopCamera();
-                return { ok: false, error: "Unable to attach the camera stream." };
+                return {ok: false, error: "Unable to attach the camera stream."};
             }
 
             video.srcObject = stream;
@@ -97,10 +98,9 @@ export function useCameraCapture(): CameraCaptureState {
 
             if (mountedRef.current && requestId === requestIdRef.current) {
                 setIsCameraActive(true);
-                setIsVideoReady(true);
             }
 
-            return { ok: true };
+            return {ok: true};
         } catch (err) {
             stopCamera();
             return {
@@ -115,7 +115,14 @@ export function useCameraCapture(): CameraCaptureState {
     }, [isStartingCamera, stopCamera]);
 
     const markVideoReady = useCallback(() => {
-        if (streamRef.current && mountedRef.current) {
+        const video = videoRef.current;
+        if (
+            streamRef.current &&
+            mountedRef.current &&
+            video &&
+            video.videoWidth &&
+            video.videoHeight
+        ) {
             setIsVideoReady(true);
         }
     }, []);
@@ -125,11 +132,11 @@ export function useCameraCapture(): CameraCaptureState {
         const canvas = canvasRef.current;
 
         if (!video || !canvas) {
-            return { ok: false, error: "Camera is not ready yet. Please try again." };
+            return {ok: false, error: "Camera is not ready yet. Please try again."};
         }
 
         if (!video.videoWidth || !video.videoHeight) {
-            return { ok: false, error: "Camera is still starting. Please wait a moment." };
+            return {ok: false, error: "Camera is still starting. Please wait a moment."};
         }
 
         const sourceWidth = video.videoWidth;
@@ -146,7 +153,7 @@ export function useCameraCapture(): CameraCaptureState {
 
         const ctx = canvas.getContext("2d");
         if (!ctx) {
-            return { ok: false, error: "Unable to capture the frame." };
+            return {ok: false, error: "Unable to capture the frame."};
         }
 
         ctx.drawImage(video, 0, 0, targetWidth, targetHeight);
@@ -156,11 +163,11 @@ export function useCameraCapture(): CameraCaptureState {
         );
 
         if (!blob) {
-            return { ok: false, error: "Failed to encode the captured image." };
+            return {ok: false, error: "Failed to encode the captured image."};
         }
 
-        const file = new File([blob], `capture-${Date.now()}.jpg`, { type: "image/jpeg" });
-        return { ok: true, file };
+        const file = new File([blob], `capture-${Date.now()}.jpg`, {type: "image/jpeg"});
+        return {ok: true, file};
     }, []);
 
     return {
