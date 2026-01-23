@@ -58,3 +58,7 @@ Finalizing tickets T1/T2 (monorepo baseline + compose bring-up) with stubbed wor
 **What I changed and why**  
 - Removed `/ocr` stub to keep scope limited to T1/T2
 - Migrated Spring config from `application.properties` to `application.yml` as requested
+
+---
+
+### Prompt 3 - T3 — Web: capture/upload licence image
