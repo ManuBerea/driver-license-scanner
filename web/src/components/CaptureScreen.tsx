@@ -51,20 +51,25 @@ export default function CaptureScreen() {
         }
     };
 
-    const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (!file) return;
-
+    const handleFileSelected = (file: File) => {
         const validationError = validateImageFile(file);
         if (validationError) {
-            event.target.value = "";
             setSelectedImage(null);
             setHasContinued(false);
             setError(validationError);
+            if (uploadInputRef.current) {
+                uploadInputRef.current.value = "";
+            }
             return;
         }
 
         selectImage(file);
+    };
+
+    const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+        handleFileSelected(file);
     };
 
     const handleCapture = async () => {
@@ -76,15 +81,7 @@ export default function CaptureScreen() {
             return;
         }
 
-        const validationError = validateImageFile(result.file);
-        if (validationError) {
-            setSelectedImage(null);
-            setHasContinued(false);
-            setError(validationError);
-            return;
-        }
-
-        selectImage(result.file);
+        handleFileSelected(result.file);
     };
 
     const handleContinue = () => {
@@ -139,6 +136,7 @@ export default function CaptureScreen() {
                         onFileChange={handleFileChange}
                         inputRef={uploadInputRef}
                         onClearSelection={resetSelection}
+                        onFileSelect={handleFileSelected}
                     />
 
                     <CameraPanel
@@ -166,7 +164,7 @@ export default function CaptureScreen() {
 
                     {hasContinued && selectedImage && (
                         <div className="text-sm text-slate-700">
-                            ✅ Ready to continue with:{" "}
+                            Ready to continue with:{" "}
                             <span className="font-semibold">{selectedImage.name}</span>
                         </div>
                     )}

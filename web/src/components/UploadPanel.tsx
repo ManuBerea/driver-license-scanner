@@ -1,34 +1,68 @@
-import type {ChangeEventHandler, RefObject} from "react";
+import { useState, type ChangeEventHandler, type DragEvent, type RefObject } from "react";
 
-import {formatBytes} from "@/lib/imageUtils";
+import { formatBytes } from "@/lib/imageUtils";
 
 type UploadPanelProps = {
     selectedImage: File | null;
     onFileChange: ChangeEventHandler<HTMLInputElement>;
     inputRef: RefObject<HTMLInputElement | null>;
     onClearSelection: () => void;
+    onFileSelect: (file: File) => void;
 };
 
 export function UploadPanel({
-                                selectedImage,
-                                onFileChange,
-                                inputRef,
-                                onClearSelection,
-                            }: UploadPanelProps) {
+    selectedImage,
+    onFileChange,
+    inputRef,
+    onClearSelection,
+    onFileSelect,
+}: UploadPanelProps) {
+    const [isDragging, setIsDragging] = useState(false);
+
+    const handleDragOver = (event: DragEvent<HTMLLabelElement>) => {
+        event.preventDefault();
+        event.dataTransfer.dropEffect = "copy";
+        setIsDragging(true);
+    };
+
+    const handleDragLeave = () => {
+        setIsDragging(false);
+    };
+
+    const handleDrop = (event: DragEvent<HTMLLabelElement>) => {
+        event.preventDefault();
+        setIsDragging(false);
+        const file = event.dataTransfer.files?.[0];
+        if (file) {
+            onFileSelect(file);
+        }
+    };
+
     return (
-        <section
-            className="flex h-full flex-col gap-5 rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-sm backdrop-blur">
+        <section className="flex h-full flex-col gap-5 rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-sm backdrop-blur">
             <div className="flex flex-col gap-2">
                 <h2 className="text-lg font-semibold text-slate-900">Upload an image</h2>
                 <p className="text-sm text-slate-600">
-                    Choose a clear, well-lit photo of the front of the UK license.
+                    Drag and drop a clear photo of the front of the UK license.
                 </p>
             </div>
 
-            <label className="flex flex-col gap-2">
-        <span className="text-sm font-medium text-slate-700">
-          Supported formats: JPG, PNG, WEBP (max 10MB)
-        </span>
+            <label
+                className={`flex min-h-[180px] cursor-pointer flex-col justify-center gap-3 rounded-2xl border border-dashed px-6 py-6 transition ${
+                    isDragging
+                        ? "border-emerald-400 bg-emerald-50"
+                        : "border-slate-300 bg-slate-50 hover:border-slate-400"
+                }`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+            >
+                <span className="text-sm font-medium text-slate-700">
+                    {isDragging ? "Drop the image here" : "Drag & drop or click to browse"}
+                </span>
+                <span className="text-xs text-slate-500">
+                    Supported formats: JPG, PNG, WEBP (max 10MB)
+                </span>
                 <input
                     ref={inputRef}
                     type="file"
