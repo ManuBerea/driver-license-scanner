@@ -39,26 +39,70 @@ Needed a scalable monorepo layout that supports Web/API/OCR worker.
 
 ### Prompt-2 — Align T1/T2 tickets to baseline
 **Context**  
-Finalizing tickets T1/T2 (monorepo baseline + compose bring-up) with stubbed worker health endpoints and DSL-friendly configs.
+Finalizing tickets T1/T2 (monorepo baseline with health endpoints + docker compose)
 
 **What I asked**  
 [Prompt T1 + T2](../AI-context-docs/codex-prompts-used.md)
 
 **What AI suggested**  
-- Clean `.gitignore` covering python/node/java artifacts
-- Dockerfiles per service + minimal OCR worker endpoints
-- Docker Compose wiring web/api/worker with ports and fake env defaults
+- Dockerfiles per service 
+- OCR worker endpoints
+- Docker Compose configs
 - Health actuator exposure in Spring Boot
 
 **What I kept**  
 - Service-specific Dockerfiles and Compose wiring
-- FastAPI `/health` stub + security guardrails
+- FastAPI `/health` endpoint
 - Actuator health exposure (YAML) for API health checks
 
 **What I changed and why**  
-- Removed `/ocr` stub to keep scope limited to T1/T2
-- Migrated Spring config from `application.properties` to `application.yml` as requested
+- Removed `/ocr` endpoint to keep scope limited to T1/T2
+- Migrated Spring config from `application.properties` to `application.yml`
 
 ---
 
-### Prompt 3 - T3 — Web: capture/upload licence image
+### Prompt-3 — T3: Web capture/upload licence image
+**Context**  
+Build the capture/upload entry step with webcam + file upload, validation, and in-memory storage only. Multiple UX bugs were reported and iterated on.
+
+**What I asked**  
+[Prompt T3](../AI-context-docs/codex-prompts-used.md) (webcam + upload with type/size validation), fix camera start/stop issues, ensure no persistence, and improve UX text.
+
+**What AI suggested**  
+- Capture screen with webcam + upload  
+- Client-side validation helper (type/size)  
+- Clear error messages and disabled actions until ready  
+- Keep image in memory only
+
+**What I kept**  
+- Everything
+
+**What I changed and why**  
+- Refactored into `components/`, `hooks`, `lib` to avoid a large `page.tsx` and improve maintainability  
+- Fixed camera lifecycle issues (camera not stopping)
+- Switched to a single Start/Stop toggle and removed confusing helper text
+- Adjusted framing to UK license aspect ratio and improved size display (B/KB/MB)  
+- Added drag-and-drop upload for easier use  
+
+---
+
+### Prompt-4 — T4: Web preview + retry before scan
+**Context**  
+Add a preview step after selection, with retry actions and a Scan button that only fires on click.
+
+**What I asked**  
+[Prompt T4](../AI-context-docs/codex-prompts-used.md) Implement preview with image display, Choose another / Retake, and Scan button (no auto upload), plus retry without refresh.
+
+**What AI suggested**  
+- Preview panel 
+- Retry without page refresh
+- Scan button
+- Placeholder UI until API wiring  
+
+**What I kept**  
+- Everything
+
+**What I changed and why**  
+- Asked for potential bugs and fixes
+- Fixed npm run lint errors and warnings 
+
