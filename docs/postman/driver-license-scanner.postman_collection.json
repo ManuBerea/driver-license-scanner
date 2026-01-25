@@ -144,6 +144,204 @@
           ]
         }
       ]
+    },
+    {
+      "name": "API - /license/scan",
+      "item": [
+        {
+          "name": "Valid image",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Request-Id",
+                "value": "test-request-123",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "image",
+                  "type": "file",
+                  "src": "<REPLACE_WITH_PATH_TO_VALID_IMAGE.jpg>"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrlApi}}/license/scan",
+              "host": [
+                "{{baseUrlApi}}"
+              ],
+              "path": [
+                "license",
+                "scan"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Cache-Control is no-store', function () { pm.response.to.have.header('Cache-Control', 'no-store'); });",
+                  "pm.test('Response has contract fields', function () {",
+                  "  var json = pm.response.json();",
+                  "  pm.expect(json).to.have.property('requestId');",
+                  "  pm.expect(json).to.have.property('selectedEngine');",
+                  "  pm.expect(json).to.have.property('attemptedEngines');",
+                  "  pm.expect(json).to.have.property('ocrConfidence');",
+                  "  pm.expect(json).to.have.property('fields');",
+                  "  pm.expect(json).to.have.property('validation');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Missing file",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Request-Id",
+                "value": "test-request-124",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": []
+            },
+            "url": {
+              "raw": "{{baseUrlApi}}/license/scan",
+              "host": [
+                "{{baseUrlApi}}"
+              ],
+              "path": [
+                "license",
+                "scan"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "pm.test('Cache-Control is no-store', function () { pm.response.to.have.header('Cache-Control', 'no-store'); });",
+                  "pm.test('Error code is INVALID_IMAGE', function () {",
+                  "  var json = pm.response.json();",
+                  "  pm.expect(json.error.code).to.eql('INVALID_IMAGE');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid type",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Request-Id",
+                "value": "test-request-125",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "image",
+                  "type": "file",
+                  "src": "<REPLACE_WITH_PATH_TO_INVALID_FILE.txt>"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrlApi}}/license/scan",
+              "host": [
+                "{{baseUrlApi}}"
+              ],
+              "path": [
+                "license",
+                "scan"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "pm.test('Error code is INVALID_IMAGE', function () {",
+                  "  var json = pm.response.json();",
+                  "  pm.expect(json.error.code).to.eql('INVALID_IMAGE');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Oversized file",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Request-Id",
+                "value": "test-request-126",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "image",
+                  "type": "file",
+                  "src": "<REPLACE_WITH_PATH_TO_LARGE_IMAGE.jpg>"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrlApi}}/license/scan",
+              "host": [
+                "{{baseUrlApi}}"
+              ],
+              "path": [
+                "license",
+                "scan"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });",
+                  "pm.test('Error code is INVALID_IMAGE', function () {",
+                  "  var json = pm.response.json();",
+                  "  pm.expect(json.error.code).to.eql('INVALID_IMAGE');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }

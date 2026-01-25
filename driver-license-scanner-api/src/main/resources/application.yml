@@ -11,3 +11,16 @@ management:
     health:
       probes:
         enabled: true
+
+scan:
+  max-file-bytes: 10485760 # 10MB
+  allowed-media-types:
+    - image/jpeg
+    - image/jpg
+    - image/png
+    - image/webp
+  allowed-extensions:
+    - .jpg
+    - .jpeg
+    - .png
+    - .webp

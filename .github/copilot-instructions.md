@@ -19,7 +19,7 @@ Allowed to log: `requestId`, timings, engine name, confidence score, error codes
 **In scope:** capture/upload → preview/retry → Scan → OCR → parse → validate → editable autofill form  
 **Out of scope:** persistence, DVLA integration, auth, non-UK IDs
 
-Supported inputs: `.jpg .jpeg .png .webp`, enforce 5–10MB size limit (UI + API).
+Supported inputs: `.jpg .jpeg .png .webp`, enforce 10MB size limit (UI + API).
 
 ## Required extracted fields (best-effort)
 Required:
