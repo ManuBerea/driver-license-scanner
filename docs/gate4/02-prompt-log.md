@@ -20,7 +20,7 @@ Each entry should correspond to a real usage of AI for implementation, debugging
 Needed a scalable monorepo layout that supports Web/API/OCR worker.
 
 **What I asked**  
-[Prompt-T1 — Create monorepo baseline](../AI-context-docs/codex-prompts-used.md)
+Create monorepo layout that supports Web/API/OCR worker.
 
 **What AI suggested**  
 - Monorepo with `web/`, `driver-license-scanner-api/`, `ocr-worker/`
@@ -37,12 +37,12 @@ Needed a scalable monorepo layout that supports Web/API/OCR worker.
 
 ---
 
-### Prompt-2 — Align T1/T2 tickets to baseline
+### Prompt-2 — Add docker compose and health endpoints
 **Context**  
 Finalizing tickets T1/T2 (monorepo baseline with health endpoints + docker compose)
 
 **What I asked**  
-[Prompt T1 + T2](../AI-context-docs/codex-prompts-used.md)
+Add docker compose configs and health endpoints to monorepo baseline.
 
 **What AI suggested**  
 - Dockerfiles per service 
@@ -128,3 +128,46 @@ Implement the scan endpoint with multipart upload validation, stubbed response, 
 **What I changed and why**  
 - Simplified Postman collection to a single Scan request with manual file selection, because variable-based file paths were unreliable in Postman
 - Added specific error codes/messages for missing image, too large, invalid format, and unsupported media type to make responses clearer
+
+### Prompt-6 - T6: OCR Worker /health + /ocr stub
+**Context**  
+Expose an OCR worker surface so the API can call OCR without storing images.
+
+**What I asked**  
+[Prompt T6](../AI-context-docs/codex-prompts-used.md) Implement POST /ocr with multipart input, returning a stubbed response, no file persistence.
+
+**What AI suggested**  
+- POST /ocr accepting multipart image and returning stubbed response shape
+- Keep everything in memory (no disk writes)
+
+**What I kept**  
+- Everything
+
+**What I changed and why**  
+- Updated Postman collection to include OCR /ocr request (health already existed)
+
+---
+
+### Prompt-7 - T7: Web scan wiring + results + retry
+**Context**  
+Wire the Scan button to the API and display results with a user-friendly retry path.
+
+**What I asked**  
+[Prompt T7](../AI-context-docs/codex-prompts-used.md) Connect Scan to POST /license/scan, show loading state, show errors without stack traces, and allow retry without refresh.
+
+**What AI suggested**  
+- Add a fetch call to /license/scan with multipart form data
+- API wired to Scan button with loading and error handling
+- Retry via same Scan button without refresh
+- Extracted text fields along with engine used and confidence
+
+**What I kept**  
+- Add a fetch call to /license/scan with multipart form data
+- API wired to Scan button with loading and error handling
+- Retry via same Scan button without refresh
+
+**What I changed and why**  
+- Show only necessary extracted fields related to license (no engine/confidence) 
+- Aligned preview layout to compare image vs extracted fields side-by-side
+- Improved UI/UX styling (clearer panels, larger field blocks)
+- Reorganized frontend to have css and js in separate folders
