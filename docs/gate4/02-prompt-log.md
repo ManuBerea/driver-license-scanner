@@ -106,3 +106,25 @@ Add a preview step after selection, with retry actions and a Scan button that on
 - Asked for potential bugs and fixes
 - Fixed npm run lint errors and warnings 
 
+
+### Prompt-5 - T5: API /license/scan stub + error handling
+**Context**  
+Implement the scan endpoint with multipart upload validation, stubbed response, and consistent error handling; update Postman for testing.
+
+**What I asked**  
+[Prompt T5](../AI-context-docs/codex-prompts-used.md) Implement POST /license/scan with validation, no-store responses, and standardized error payloads; also fix Postman tests and file upload issues.
+
+**What AI suggested**  
+- Create ScanController and DTOs for response contract
+- Add global exception handling for 413/415 and multipart errors
+- Enforce multipart size limits in Spring config
+- Provide Postman collection updates and sample assets
+
+**What I kept**  
+- /license/scan endpoint with multipart validation and stubbed response
+- Global exception handling for 413/415 and multipart errors
+- Multipart size limits (10MB) in application.yml
+
+**What I changed and why**  
+- Simplified Postman collection to a single Scan request with manual file selection, because variable-based file paths were unreliable in Postman
+- Added specific error codes/messages for missing image, too large, invalid format, and unsupported media type to make responses clearer
