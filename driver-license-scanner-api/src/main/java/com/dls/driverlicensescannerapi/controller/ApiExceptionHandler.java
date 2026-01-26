@@ -4,7 +4,9 @@ import com.dls.driverlicensescannerapi.dto.ErrorDetail;
 import com.dls.driverlicensescannerapi.dto.ErrorResponse;
 import com.dls.driverlicensescannerapi.error.ErrorCatalog;
 import jakarta.servlet.http.HttpServletRequest;
+
 import java.util.UUID;
+
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -29,7 +31,7 @@ public class ApiExceptionHandler {
         return buildErrorResponse(
                 request,
                 HttpStatus.PAYLOAD_TOO_LARGE,
-                ErrorCatalog.IMAGE_TOO_LARGE_CODE,
+                ErrorCatalog.INVALID_IMAGE_CODE,
                 ErrorCatalog.IMAGE_TOO_LARGE_MESSAGE
         );
     }
@@ -42,7 +44,7 @@ public class ApiExceptionHandler {
         return buildErrorResponse(
                 request,
                 HttpStatus.UNSUPPORTED_MEDIA_TYPE,
-                ErrorCatalog.UNSUPPORTED_MEDIA_TYPE_CODE,
+                ErrorCatalog.INVALID_IMAGE_CODE,
                 ErrorCatalog.UNSUPPORTED_MEDIA_TYPE_MESSAGE
         );
     }
@@ -55,7 +57,7 @@ public class ApiExceptionHandler {
         return buildErrorResponse(
                 request,
                 HttpStatus.BAD_REQUEST,
-                ErrorCatalog.INVALID_FORMAT_CODE,
+                ErrorCatalog.INVALID_IMAGE_CODE,
                 ErrorCatalog.INVALID_FORMAT_MESSAGE
         );
     }
@@ -68,7 +70,7 @@ public class ApiExceptionHandler {
         return buildErrorResponse(
                 request,
                 HttpStatus.BAD_REQUEST,
-                ErrorCatalog.MISSING_IMAGE_CODE,
+                ErrorCatalog.INVALID_IMAGE_CODE,
                 ErrorCatalog.MISSING_IMAGE_MESSAGE
         );
     }

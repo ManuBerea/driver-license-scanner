@@ -44,15 +44,15 @@ public class ScanController {
         String requestId = resolveRequestId(requestIdHeader);
 
         if (image == null || image.isEmpty()) {
-            return errorResponse(requestId, ErrorCatalog.MISSING_IMAGE_CODE, ErrorCatalog.MISSING_IMAGE_MESSAGE);
+            return errorResponse(requestId, ErrorCatalog.INVALID_IMAGE_CODE, ErrorCatalog.MISSING_IMAGE_MESSAGE);
         }
 
         if (image.getSize() > MAX_FILE_BYTES) {
-            return errorResponse(requestId, ErrorCatalog.IMAGE_TOO_LARGE_CODE, ErrorCatalog.IMAGE_TOO_LARGE_MESSAGE);
+            return errorResponse(requestId, ErrorCatalog.INVALID_IMAGE_CODE, ErrorCatalog.IMAGE_TOO_LARGE_MESSAGE);
         }
 
         if (!hasAllowedFormat(image)) {
-            return errorResponse(requestId, ErrorCatalog.INVALID_FORMAT_CODE, ErrorCatalog.INVALID_FORMAT_MESSAGE);
+            return errorResponse(requestId, ErrorCatalog.INVALID_IMAGE_CODE, ErrorCatalog.INVALID_FORMAT_MESSAGE);
         }
 
         ScanResponse response = new ScanResponse(
