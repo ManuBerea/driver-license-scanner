@@ -26,7 +26,12 @@ public class ApiExceptionHandler {
             MaxUploadSizeExceededException ex,
             HttpServletRequest request
     ) {
-        return buildErrorResponse(request, HttpStatus.PAYLOAD_TOO_LARGE);
+        return buildErrorResponse(
+                request,
+                HttpStatus.PAYLOAD_TOO_LARGE,
+                ErrorCatalog.IMAGE_TOO_LARGE_CODE,
+                ErrorCatalog.IMAGE_TOO_LARGE_MESSAGE
+        );
     }
 
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
@@ -34,7 +39,12 @@ public class ApiExceptionHandler {
             HttpMediaTypeNotSupportedException ex,
             HttpServletRequest request
     ) {
-        return buildErrorResponse(request, HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+        return buildErrorResponse(
+                request,
+                HttpStatus.UNSUPPORTED_MEDIA_TYPE,
+                ErrorCatalog.UNSUPPORTED_MEDIA_TYPE_CODE,
+                ErrorCatalog.UNSUPPORTED_MEDIA_TYPE_MESSAGE
+        );
     }
 
     @ExceptionHandler(MultipartException.class)
@@ -42,7 +52,12 @@ public class ApiExceptionHandler {
             MultipartException ex,
             HttpServletRequest request
     ) {
-        return buildErrorResponse(request, HttpStatus.BAD_REQUEST);
+        return buildErrorResponse(
+                request,
+                HttpStatus.BAD_REQUEST,
+                ErrorCatalog.INVALID_FORMAT_CODE,
+                ErrorCatalog.INVALID_FORMAT_MESSAGE
+        );
     }
 
     @ExceptionHandler(MissingServletRequestPartException.class)
@@ -50,14 +65,24 @@ public class ApiExceptionHandler {
             MissingServletRequestPartException ex,
             HttpServletRequest request
     ) {
-        return buildErrorResponse(request, HttpStatus.BAD_REQUEST);
+        return buildErrorResponse(
+                request,
+                HttpStatus.BAD_REQUEST,
+                ErrorCatalog.MISSING_IMAGE_CODE,
+                ErrorCatalog.MISSING_IMAGE_MESSAGE
+        );
     }
 
-    private ResponseEntity<ErrorResponse> buildErrorResponse(HttpServletRequest request, HttpStatus status) {
+    private ResponseEntity<ErrorResponse> buildErrorResponse(
+            HttpServletRequest request,
+            HttpStatus status,
+            String code,
+            String message
+    ) {
         String requestId = resolveRequestId(request);
         ErrorResponse response = new ErrorResponse(
                 requestId,
-                new ErrorDetail(ErrorCatalog.INVALID_IMAGE_CODE, ErrorCatalog.INVALID_IMAGE_MESSAGE)
+                new ErrorDetail(code, message)
         );
         return ResponseEntity.status(status)
                 .headers(noStoreHeaders())

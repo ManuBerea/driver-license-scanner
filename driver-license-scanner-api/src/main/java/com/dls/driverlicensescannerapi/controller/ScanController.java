@@ -1,10 +1,10 @@
 package com.dls.driverlicensescannerapi.controller;
 
+import com.dls.driverlicensescannerapi.dto.ErrorDetail;
+import com.dls.driverlicensescannerapi.dto.ErrorResponse;
 import com.dls.driverlicensescannerapi.dto.LicenseFields;
 import com.dls.driverlicensescannerapi.dto.ScanResponse;
 import com.dls.driverlicensescannerapi.dto.ValidationResult;
-import com.dls.driverlicensescannerapi.dto.ErrorDetail;
-import com.dls.driverlicensescannerapi.dto.ErrorResponse;
 import com.dls.driverlicensescannerapi.error.ErrorCatalog;
 import java.util.List;
 import java.util.Locale;
@@ -43,8 +43,16 @@ public class ScanController {
     ) {
         String requestId = resolveRequestId(requestIdHeader);
 
-        if (!isValidImage(image)) {
-            return errorResponse(requestId);
+        if (image == null || image.isEmpty()) {
+            return errorResponse(requestId, ErrorCatalog.MISSING_IMAGE_CODE, ErrorCatalog.MISSING_IMAGE_MESSAGE);
+        }
+
+        if (image.getSize() > MAX_FILE_BYTES) {
+            return errorResponse(requestId, ErrorCatalog.IMAGE_TOO_LARGE_CODE, ErrorCatalog.IMAGE_TOO_LARGE_MESSAGE);
+        }
+
+        if (!hasAllowedFormat(image)) {
+            return errorResponse(requestId, ErrorCatalog.INVALID_FORMAT_CODE, ErrorCatalog.INVALID_FORMAT_MESSAGE);
         }
 
         ScanResponse response = new ScanResponse(
@@ -71,15 +79,7 @@ public class ScanController {
                 .body(response);
     }
 
-    private boolean isValidImage(MultipartFile image) {
-        if (image == null || image.isEmpty()) {
-            return false;
-        }
-
-        if (image.getSize() > MAX_FILE_BYTES) {
-            return false;
-        }
-
+    private boolean hasAllowedFormat(MultipartFile image) {
         String contentType = image.getContentType();
         boolean contentTypeAllowed = contentType != null && ALLOWED_CONTENT_TYPES.contains(contentType);
 
@@ -93,10 +93,10 @@ public class ScanController {
         return contentTypeAllowed || extensionAllowed;
     }
 
-    private ResponseEntity<ErrorResponse> errorResponse(String requestId) {
+    private ResponseEntity<ErrorResponse> errorResponse(String requestId, String code, String message) {
         ErrorResponse response = new ErrorResponse(
                 requestId,
-                new ErrorDetail(ErrorCatalog.INVALID_IMAGE_CODE, ErrorCatalog.INVALID_IMAGE_MESSAGE)
+                new ErrorDetail(code, message)
         );
         return ResponseEntity.badRequest()
                 .headers(noStoreHeaders())
