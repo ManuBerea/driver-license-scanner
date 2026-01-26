@@ -144,6 +144,38 @@
           ]
         }
       ]
+    },
+    {
+      "name": "Scan",
+      "item": [
+        {
+          "name": "API - License Scan",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "image",
+                  "type": "file"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrlApi}}/license/scan",
+              "host": [
+                "{{baseUrlApi}}"
+              ],
+              "path": [
+                "license",
+                "scan"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
     }
   ]
 }
