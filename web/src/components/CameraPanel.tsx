@@ -25,7 +25,7 @@ export function CameraPanel({
                             }: CameraPanelProps) {
     return (
         <section
-            className="flex h-full flex-col gap-5 rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-sm backdrop-blur">
+            className="flex h-full flex-col gap-6 rounded-2xl border border-slate-200 bg-white/90 p-6 shadow-sm backdrop-blur">
             <div className="flex flex-col gap-2">
                 <h2 className="text-lg font-semibold text-slate-900">Use your camera</h2>
                 <p className="text-sm text-slate-600">
@@ -33,7 +33,7 @@ export function CameraPanel({
                 </p>
             </div>
 
-            <div className="relative w-full overflow-hidden rounded-2xl border border-slate-200 bg-slate-900">
+            <div className="relative w-full overflow-hidden rounded-2xl border border-slate-200 bg-slate-900 shadow-inner">
                 <div className="relative w-full" style={{aspectRatio: UK_LICENSE_ASPECT_RATIO}}>
                     <video
                         ref={videoRef}
@@ -43,6 +43,7 @@ export function CameraPanel({
                         playsInline
                         muted
                     />
+                    <div className="pointer-events-none absolute inset-6 rounded-xl border border-emerald-300/50" />
                     {!isCameraActive && (
                         <div
                             className="absolute inset-0 grid place-items-center px-6 text-center text-sm text-slate-200">
@@ -57,7 +58,7 @@ export function CameraPanel({
             <div className="flex flex-wrap gap-3">
                 <button
                     type="button"
-                    className="rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-300 disabled:cursor-not-allowed disabled:opacity-60"
                     onClick={onStartStop}
                     disabled={isStartingCamera}
                 >
@@ -66,7 +67,7 @@ export function CameraPanel({
 
                 <button
                     type="button"
-                    className="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
+                    className="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 disabled:cursor-not-allowed disabled:bg-slate-400"
                     onClick={onCapture}
                     disabled={!isCameraActive || !isVideoReady || isStartingCamera}
                 >

@@ -41,7 +41,7 @@ export function UploadPanel({
     };
 
     return (
-        <section className="flex h-full flex-col gap-5 rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-sm backdrop-blur">
+        <section className="flex h-full flex-col gap-6 rounded-2xl border border-slate-200 bg-white/90 p-6 shadow-sm backdrop-blur">
             <div className="flex flex-col gap-2">
                 <h2 className="text-lg font-semibold text-slate-900">Upload an image</h2>
                 <p className="text-sm text-slate-600">
@@ -50,10 +50,10 @@ export function UploadPanel({
             </div>
 
             <label
-                className={`flex min-h-[180px] cursor-pointer flex-col justify-center gap-3 rounded-2xl border border-dashed px-6 py-6 transition ${
+                className={`group flex min-h-[220px] cursor-pointer flex-col justify-center gap-3 rounded-2xl border border-dashed px-6 py-6 transition-all ${
                     isDragging
-                        ? "border-emerald-400 bg-emerald-50"
-                        : "border-slate-300 bg-slate-50 hover:border-slate-400"
+                        ? "border-emerald-400 bg-emerald-50 shadow-sm"
+                        : "border-slate-300 bg-slate-50/80 hover:border-slate-400 hover:bg-white"
                 }`}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
@@ -69,13 +69,13 @@ export function UploadPanel({
                     ref={inputRef}
                     type="file"
                     accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
-                    className="text-sm file:mr-4 file:rounded-full file:border-0 file:bg-slate-900 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-slate-800"
+                    className="text-sm file:mr-4 file:rounded-full file:border-0 file:bg-slate-900 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white transition hover:file:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2"
                     onChange={onFileChange}
                 />
             </label>
 
             {selectedImage ? (
-                <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
+                <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900 shadow-sm">
                     <div className="flex items-start justify-between gap-3">
                         <div>
                             <div className="font-semibold">Selected image</div>
@@ -86,7 +86,7 @@ export function UploadPanel({
 
                         <button
                             type="button"
-                            className="rounded-full border border-emerald-300 bg-white px-3 py-1 text-xs font-semibold text-emerald-900 shadow-sm transition hover:bg-emerald-100"
+                            className="rounded-full border border-emerald-300 bg-white px-3 py-1 text-xs font-semibold text-emerald-900 shadow-sm transition hover:bg-emerald-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
                             onClick={onClearSelection}
                         >
                             Clear
