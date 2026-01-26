@@ -1,10 +1,11 @@
 package com.dls.driverlicensescannerapi.controller;
 
-import com.dls.driverlicensescannerapi.dto.ErrorDetail;
-import com.dls.driverlicensescannerapi.dto.ErrorResponse;
 import com.dls.driverlicensescannerapi.dto.LicenseFields;
 import com.dls.driverlicensescannerapi.dto.ScanResponse;
 import com.dls.driverlicensescannerapi.dto.ValidationResult;
+import com.dls.driverlicensescannerapi.dto.ErrorDetail;
+import com.dls.driverlicensescannerapi.dto.ErrorResponse;
+import com.dls.driverlicensescannerapi.error.ErrorCatalog;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -43,11 +44,7 @@ public class ScanController {
         String requestId = resolveRequestId(requestIdHeader);
 
         if (!isValidImage(image)) {
-            return errorResponse(
-                    requestId,
-                    "INVALID_IMAGE",
-                    "Invalid image. Please upload a JPG, PNG, or WEBP file under 10MB."
-            );
+            return errorResponse(requestId);
         }
 
         ScanResponse response = new ScanResponse(
@@ -96,8 +93,11 @@ public class ScanController {
         return contentTypeAllowed || extensionAllowed;
     }
 
-    private ResponseEntity<ErrorResponse> errorResponse(String requestId, String code, String message) {
-        ErrorResponse response = new ErrorResponse(requestId, new ErrorDetail(code, message));
+    private ResponseEntity<ErrorResponse> errorResponse(String requestId) {
+        ErrorResponse response = new ErrorResponse(
+                requestId,
+                new ErrorDetail(ErrorCatalog.INVALID_IMAGE_CODE, ErrorCatalog.INVALID_IMAGE_MESSAGE)
+        );
         return ResponseEntity.badRequest()
                 .headers(noStoreHeaders())
                 .body(response);

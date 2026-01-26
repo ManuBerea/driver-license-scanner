@@ -2,6 +2,7 @@ package com.dls.driverlicensescannerapi.controller;
 
 import com.dls.driverlicensescannerapi.dto.ErrorDetail;
 import com.dls.driverlicensescannerapi.dto.ErrorResponse;
+import com.dls.driverlicensescannerapi.error.ErrorCatalog;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.UUID;
 import org.springframework.http.CacheControl;
@@ -9,17 +10,16 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
 
     private static final String REQUEST_ID_HEADER = "X-Request-Id";
-    private static final String INVALID_IMAGE_CODE = "INVALID_IMAGE";
-    private static final String INVALID_IMAGE_MESSAGE =
-            "Invalid image. Please upload a JPG, PNG, or WEBP file under 10MB.";
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<ErrorResponse> handlePayloadTooLarge(
@@ -37,11 +37,27 @@ public class ApiExceptionHandler {
         return buildErrorResponse(request, HttpStatus.UNSUPPORTED_MEDIA_TYPE);
     }
 
+    @ExceptionHandler(MultipartException.class)
+    public ResponseEntity<ErrorResponse> handleMultipartError(
+            MultipartException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(request, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MissingServletRequestPartException.class)
+    public ResponseEntity<ErrorResponse> handleMissingPart(
+            MissingServletRequestPartException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(request, HttpStatus.BAD_REQUEST);
+    }
+
     private ResponseEntity<ErrorResponse> buildErrorResponse(HttpServletRequest request, HttpStatus status) {
         String requestId = resolveRequestId(request);
         ErrorResponse response = new ErrorResponse(
                 requestId,
-                new ErrorDetail(INVALID_IMAGE_CODE, INVALID_IMAGE_MESSAGE)
+                new ErrorDetail(ErrorCatalog.INVALID_IMAGE_CODE, ErrorCatalog.INVALID_IMAGE_MESSAGE)
         );
         return ResponseEntity.status(status)
                 .headers(noStoreHeaders())
