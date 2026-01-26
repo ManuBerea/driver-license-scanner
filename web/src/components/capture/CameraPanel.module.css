@@ -1,0 +1,53 @@
+@reference "tailwindcss";
+
+.panel {
+  @apply flex h-full flex-col gap-6 rounded-2xl border border-slate-200 bg-white/90 p-6 shadow-sm backdrop-blur;
+}
+
+.header {
+  @apply flex flex-col gap-2;
+}
+
+.heading {
+  @apply text-lg font-semibold text-slate-900;
+}
+
+.subheading {
+  @apply text-sm text-slate-600;
+}
+
+.videoShell {
+  @apply relative w-full overflow-hidden rounded-2xl border border-slate-200 bg-slate-900 shadow-inner;
+}
+
+.videoAspect {
+  @apply relative w-full;
+}
+
+.video {
+  @apply h-full w-full object-cover;
+}
+
+.frameOverlay {
+  @apply pointer-events-none absolute inset-6 rounded-xl border border-emerald-300/50;
+}
+
+.cameraPlaceholder {
+  @apply absolute inset-0 grid place-items-center px-6 text-center text-sm text-slate-200;
+}
+
+.buttonRow {
+  @apply flex flex-wrap gap-3;
+}
+
+.toggleButton {
+  @apply rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-300 disabled:cursor-not-allowed disabled:opacity-60;
+}
+
+.captureButton {
+  @apply rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 disabled:cursor-not-allowed disabled:bg-slate-400;
+}
+
+.hiddenCanvas {
+  @apply hidden;
+}
