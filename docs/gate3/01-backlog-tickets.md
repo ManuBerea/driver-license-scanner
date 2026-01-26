@@ -191,32 +191,9 @@ Wire the “Scan” button to:
 
 ---
 
-## T8 — v0 requirement: surface “raw OCR output” end-to-end
-
-### Goal
-v0 must demonstrate “capture + raw OCR output” (even if stubbed).
-
-### Context
-The POC brief defines v0 as capture + raw OCR output (foundation milestone).
-
-### Task
-Implement one of the following (choose the simplest):
-- Option A: API includes an `ocrRaw.lines[]` field in the scan response (for v0/dev only), OR
-- Option B: UI shows a debug panel listing OCR `lines[]` returned by the API.
-
-### Requirements
-- Raw OCR output must not be logged to console in production mode
-- Keep PII guardrails: do not log OCR text server-side
-
-### Acceptance Criteria
-- After Scan, the user can see raw OCR lines somewhere (response or debug panel)
-- No PII appears in backend logs
-
----
-
 # v0.1 — Real OCR + Parsing + Auto-fill Form
 
-## T9 — OCR Worker: PaddleOCR integration
+## T8 — OCR Worker: PaddleOCR integration
 
 ### Goal
 Return real OCR `lines[]`, confidence, and timing.
@@ -241,7 +218,7 @@ Integrate PaddleOCR in `/ocr`:
 
 ---
 
-## T10 — OCR engine selection abstraction (+ docTR + cloud placeholders)
+## T9 — OCR engine selection abstraction (+ docTR + cloud placeholders)
 
 ### Goal
 Support selecting OCR engines via config to enable later benchmarking.
@@ -267,7 +244,7 @@ Implement OCR engine selection with env/config:
 
 ---
 
-## T11 — API: OCR client calls worker (internal)
+## T10 — API: OCR client calls worker (internal)
 
 ### Goal
 API calls OCR worker reliably with safe failure handling.
@@ -293,7 +270,7 @@ Implement API → OCR worker call:
 
 ---
 
-## T12 — API: deterministic parser to required fields
+## T11 — API: deterministic parser to required fields
 
 ### Goal
 Extract structured driver fields from OCR output without guessing.
@@ -321,7 +298,7 @@ Optional: categories
 
 ---
 
-## T13 — API: scan response contract (fields + validation + headers)
+## T12 — API: scan response contract (fields + validation + headers)
 
 ### Goal
 Return stable scan response to the web app.
@@ -349,7 +326,7 @@ Update `/license/scan` to:
 
 ---
 
-## T14 — Web: editable driver form + low-confidence warning
+## T13 — Web: editable driver form + low-confidence warning
 
 ### Goal
 Auto-fill an editable form and warn users on low confidence.
@@ -378,7 +355,7 @@ User must be able to correct OCR mistakes and review low-confidence scans.
 
 # v1 — Validation + Fallback + Quality + Benchmarking + Deployment
 
-## T15 — API: backend validation rules (blocking + warnings)
+## T14 — API: backend validation rules (blocking + warnings)
 
 ### Goal
 Validate extracted/user-edited fields and return structured validation results.
@@ -405,7 +382,7 @@ Return `validation`:
 
 ---
 
-## T16 — Web: field-level errors + block submit when invalid
+## T15 — Web: field-level errors + block submit when invalid
 
 ### Goal
 Display validation errors and prevent submission when blocking errors exist.
@@ -428,7 +405,7 @@ Users must fix issues before completing the flow.
 
 ---
 
-## T17 — API: fallback OCR orchestration (optional, flagged)
+## T16 — API: fallback OCR orchestration (optional, flagged)
 
 ### Goal
 Optionally retry with a different OCR engine when results are poor.
@@ -459,7 +436,7 @@ Implement optional fallback logic:
 
 ---
 
-## T18 — Synthetic dataset (30 images) + ground truth
+## T17 — Synthetic dataset (30 images) + ground truth
 
 ### Goal
 Create a safe dataset for evaluation: 10 clean / 10 medium / 10 poor.
@@ -484,7 +461,7 @@ Create:
 
 ---
 
-## T19 — Evaluation harness + OCR engine comparison report
+## T18 — Evaluation harness + OCR engine comparison report
 
 ### Goal
 Generate a repeatable report comparing OCR engines and performance.
@@ -520,7 +497,7 @@ Create an evaluation runner that:
 
 ---
 
-## T20 — Staging deployment + security/privacy checklist verification
+## T19 — Staging deployment + security/privacy checklist verification
 
 ### Goal
 Deploy the POC to staging and verify privacy guarantees.

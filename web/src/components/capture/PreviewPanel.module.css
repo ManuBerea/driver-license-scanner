@@ -1,0 +1,121 @@
+@reference "tailwindcss";
+
+.panel {
+  @apply flex flex-col gap-6 rounded-2xl border border-slate-200 bg-white/90 p-6 shadow-sm backdrop-blur;
+}
+
+.header {
+  @apply flex flex-col gap-2;
+}
+
+.title {
+  @apply text-lg font-semibold text-slate-900;
+}
+
+.subtitle {
+  @apply text-sm text-slate-600;
+}
+
+.layout {
+  @apply grid gap-6 items-stretch lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)];
+}
+
+.column {
+  @apply flex h-full flex-col gap-4;
+}
+
+.pulseDot {
+  @apply h-2 w-2 animate-pulse rounded-full bg-current;
+}
+
+.photoCard {
+  @apply flex h-full flex-col rounded-2xl border border-slate-200 bg-white/90 shadow-sm;
+}
+
+.photoHeader {
+  @apply flex items-center justify-between border-b border-slate-100 px-4 py-3;
+}
+
+.photoTitle {
+  @apply text-sm font-semibold text-slate-900;
+}
+
+.statusBadge {
+  @apply inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold shadow-sm;
+}
+
+.statusReady {
+  @apply bg-slate-100 text-slate-700 border-slate-200;
+}
+
+.statusScanning {
+  @apply bg-sky-100 text-sky-800 border-sky-200;
+}
+
+.statusBadgeError {
+  @apply bg-rose-100 text-rose-800 border-rose-200;
+}
+
+.statusSuccess {
+  @apply bg-emerald-100 text-emerald-800 border-emerald-200;
+}
+
+.photoBody {
+  @apply flex flex-1 flex-col gap-3 p-4;
+}
+
+.photoFrame {
+  @apply relative w-full overflow-hidden rounded-xl border border-slate-200 bg-slate-50;
+}
+
+.photoImage {
+  @apply absolute inset-0 h-full w-full object-contain;
+}
+
+.fileDetails {
+  @apply text-sm text-slate-600;
+}
+
+.fieldsCard {
+  @apply flex h-full flex-col rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900 shadow-sm;
+}
+
+.fieldsTitle {
+  @apply mb-3 text-base font-semibold;
+}
+
+.fieldsGrid {
+  @apply grid gap-3 sm:grid-cols-2 content-start;
+}
+
+.fieldItem {
+  @apply rounded-lg bg-white/90 px-3 py-3 shadow-sm;
+}
+
+.fieldLabel {
+  @apply text-[11px] uppercase tracking-wide text-emerald-900/70;
+}
+
+.fieldValue {
+  @apply text-base font-medium text-emerald-950;
+}
+
+.statusInfo {
+  @apply rounded-xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-900 shadow-sm;
+}
+
+.errorBox {
+  @apply rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900 shadow-sm;
+}
+
+.actions {
+  @apply flex flex-wrap gap-3;
+}
+
+.secondaryButton {
+  @apply rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-300;
+}
+
+.primaryButton {
+  @apply rounded-full bg-emerald-600 px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 disabled:cursor-not-allowed disabled:bg-emerald-300;
+}

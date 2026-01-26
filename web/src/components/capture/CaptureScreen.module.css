@@ -1,0 +1,41 @@
+@reference "tailwindcss";
+
+.page {
+  @apply relative min-h-screen overflow-hidden bg-gradient-to-br from-amber-50 via-white to-sky-50 text-slate-900;
+}
+
+.orbTop {
+  @apply pointer-events-none absolute -top-24 right-0 h-64 w-64 rounded-full bg-amber-200/40 blur-3xl;
+}
+
+.orbBottom {
+  @apply pointer-events-none absolute -bottom-24 left-0 h-64 w-64 rounded-full bg-sky-200/40 blur-3xl;
+}
+
+.main {
+  @apply mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-12 md:px-10;
+}
+
+.header {
+  @apply flex flex-col gap-3;
+}
+
+.stepBadge {
+  @apply w-fit rounded-full border border-slate-200 bg-white/80 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-600 shadow-sm;
+}
+
+.title {
+  @apply text-3xl font-bold tracking-tight text-slate-900 md:text-4xl;
+}
+
+.subtitle {
+  @apply max-w-2xl text-sm text-slate-600 md:text-base;
+}
+
+.error {
+  @apply rounded-2xl border border-rose-200 bg-rose-50 px-5 py-4 text-sm text-rose-900 shadow-sm;
+}
+
+.captureGrid {
+  @apply grid gap-6 md:grid-cols-2;
+}

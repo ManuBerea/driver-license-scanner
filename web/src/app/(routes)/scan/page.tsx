@@ -1,5 +1,5 @@
 import CaptureScreen from "@/components/capture/CaptureScreen";
 
-export default function Page() {
-    return <CaptureScreen/>;
+export default function ScanPage() {
+  return <CaptureScreen />;
 }

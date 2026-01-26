@@ -9,7 +9,7 @@ Only implement this ticket. Do not refactor unrelated code.
 
 ---
 
-## Prompt-T1 — Web: capture/upload licence image
+## Prompt-T3 — Web: capture/upload licence image
 ```md
 ## Objective
 Implement **Story 01**: allow motor trade staff to **capture** a UK driving license image via **webcam** OR **upload a file**, as the first step of the scan flow.
@@ -54,7 +54,7 @@ Webcam capture + file upload both work, validation errors render correctly, and 
 
 ---
 
-## Prompt-T2 — Web: preview + retry before scan
+## Prompt-T4 — Web: preview + retry before scan
 ```md
 ## Objective
 Implement the **preview step** after capture/upload (Story 01 / T3). User must review the selected licence image, retry if needed, and start scanning only when they click **Scan**.
@@ -101,7 +101,7 @@ Preview shows the image, retry replaces it without refresh, and Scan is gated on
 
 ---
 
-## Prompt-T3 — API: `/license/scan` endpoint stub
+## Prompt-T5 — API: `/license/scan` endpoint stub
 ```md
 ## Objective
 Create stub scan endpoint with correct response + error shape.
@@ -133,7 +133,7 @@ Endpoint returns correct stub JSON and invalid upload returns INVALID_IMAGE.
 
 ---
 
-## Prompt-T4 — OCR worker: `/health` + `/ocr` stub
+## Prompt-T6 — OCR worker: `/ocr` stub
 ```md
 ## Objective
 Implement worker endpoints: GET /health and POST /ocr (stub response).
@@ -144,7 +144,6 @@ Implement worker endpoints: GET /health and POST /ocr (stub response).
 
 ## Task
 Implement:
-- GET /health -> 200 { "status": "ok" }
 - POST /ocr accepts multipart `image` and returns:
   { requestId, engine:"stub", confidence:0.0, lines:[], processingTimeMs:1 }
 
@@ -152,7 +151,7 @@ Implement:
 - FastAPI app routing + minimal models
 
 ## Verification
-- curl /health and /ocr
+- curl /ocr
 - confirm no files written to disk
 
 ## Stop when
@@ -161,7 +160,7 @@ Endpoints run and return correct JSON shapes.
 
 ---
 
-## Prompt-T5 — Web: call scan API + loading/error/retry
+## Prompt-T7 — Web: call scan API + loading/error/retry
 ```md
 ## Objective
 Wire Scan button to API with loading + error + retry UX.
@@ -190,38 +189,7 @@ Scan request works with correct UX behavior.
 
 ---
 
-## Prompt-T6 — v0: show raw OCR output (DEV-only, safe)
-```md
-## Objective
-Show OCR output end-to-end for v0 debugging (dev-only).
-
-## Constraints
-- Do NOT log OCR text server-side
-- Do NOT change `/license/scan` contract
-- Debug output must be gated and OFF by default
-
-## Task (choose simplest)
-Option A (preferred): Add a web debug panel that displays OCR lines returned by API ONLY when `ENABLE_OCR_DEBUG=true`.
-Option B: Add a dev-only API debug endpoint returning SAFE metadata (requestId, confidence, lineCount, engine, timings).
-
-If showing OCR text anywhere:
-- gate with `ENABLE_OCR_DEBUG_TEXT=true` (default false)
-- never log it
-
-## Deliverables
-- One dev-only debug view (safe by default)
-
-## Verification
-- Show where debug info appears after Scan
-- Confirm debug endpoint/panel is disabled by default
-
-## Stop when
-v0 can show OCR debug info end-to-end without breaking contracts or privacy rules.
-```
-
----
-
-## Prompt-T7 — OCR Worker: PaddleOCR integration
+## Prompt-T8 — OCR Worker: PaddleOCR integration
 ```md
 ## Objective
 Replace stub OCR with PaddleOCR and return real lines + confidence.
@@ -250,7 +218,7 @@ Implement PaddleOCR:
 
 ---
 
-## Prompt-T8 — Worker: engine selection + confidence (minimal)
+## Prompt-T9 — Worker: engine selection + confidence (minimal)
 ```md
 ## Objective
 Add OCR engine selection (paddle|doctr|vision|textract) with consistent OcrResult output.
@@ -280,7 +248,7 @@ Engine selection works and all engines return same output schema.
 
 ---
 
-## Prompt-T9 — API: `OcrClient` calls worker + timeout + error mapping
+## Prompt-T10 — API: `OcrClient` calls worker + timeout + error mapping
 ```md
 ## Objective
 API calls OCR worker safely with timeout + internal key and maps failures to standard codes.
@@ -312,7 +280,7 @@ API can call worker and returns standardized error codes on failures.
 
 ---
 
-## Prompt-T10 — API: deterministic parser to required fields
+## Prompt-T11 — API: deterministic parser to required fields
 ```md
 ## Objective
 Parse OCR lines into structured fields deterministically.
@@ -341,7 +309,7 @@ Parser returns best-effort fields and leaves unknowns empty.
 
 ---
 
-## Prompt-T11 — API: full scan contract (OCR + parse + validation stub + no-store)
+## Prompt-T12 — API: full scan contract (OCR + parse + validation stub + no-store)
 ```md
 ## Objective
 Return the final scan response contract to frontend.
@@ -372,7 +340,7 @@ Scan endpoint returns correct contract reliably.
 
 ---
 
-## Prompt-T12 — Web: editable driver form + low-confidence warning
+## Prompt-T13 — Web: editable driver form + low-confidence warning
 ```md
 ## Objective
 Show editable form auto-filled from scan response + low-confidence warning.
@@ -401,7 +369,7 @@ Form renders, autofills, edits work, warning works.
 
 ---
 
-## Prompt-T13 — API: backend validation rules (blocking + warnings)
+## Prompt-T14 — API: backend validation rules (blocking + warnings)
 ```md
 ## Objective
 Validate extracted fields and return structured validation results.
@@ -433,7 +401,7 @@ Validation returns correct results for common invalid cases.
 
 ---
 
-## Prompt-T14 — Web: field-level errors + block submit
+## Prompt-T15 — Web: field-level errors + block submit
 ```md
 ## Objective
 Display API validation errors and block submit when invalid.
@@ -458,7 +426,7 @@ Errors render correctly and submit is blocked when invalid.
 
 ---
 
-## Prompt-T15 — API: fallback OCR orchestration (optional, flagged)
+## Prompt-T16 — API: fallback OCR orchestration (optional, flagged)
 ```md
 ## Objective
 Add optional fallback OCR strategy for low quality results.
@@ -490,7 +458,7 @@ Fallback works safely and metadata reflects attempts.
 
 ---
 
-## Prompt-T16 — Synthetic dataset structure + ground truth templates
+## Prompt-T17 — Synthetic dataset structure + ground truth templates
 ```md
 ## Objective
 Create dataset folder structure for evaluation (synthetic only).
@@ -521,7 +489,7 @@ Dataset structure exists and ground truth schema is ready for 30 items.
 
 ---
 
-## Prompt-T17 — Evaluation harness + OCR comparison report (minimal)
+## Prompt-T18 — Evaluation harness + OCR comparison report (minimal)
 ```md
 ## Objective
 Generate `reports/ocr_engine_comparison.md` with accuracy + latency metrics.
@@ -554,7 +522,7 @@ Runner produces a markdown report with tables and pass/fail checks.
 
 ---
 
-## Prompt-T18 — Staging docs + security/privacy checklist
+## Prompt-T19 — Staging docs + security/privacy checklist
 ```md
 ## Objective
 Prepare staging deployment notes and verify privacy/security requirements.
