@@ -1,6 +1,6 @@
 "use client";
 
-import {useRef, useState, type ChangeEvent} from "react";
+import { useRef, useState, type ChangeEvent } from "react";
 
 import { CameraPanel } from "@/components/CameraPanel";
 import { PreviewPanel } from "@/components/PreviewPanel";
@@ -8,13 +8,51 @@ import { UploadPanel } from "@/components/UploadPanel";
 import { useCameraCapture } from "@/hooks/useCameraCapture";
 import { validateImageFile } from "@/lib/imageUtils";
 
+type ScanErrorPayload = {
+    error?: {
+        code?: string;
+        message?: string;
+    };
+};
+
+type ScanValidation = {
+    blockingErrors?: Array<{ code: string; field?: string | null; message?: string }>;
+    warnings?: string[];
+};
+
+type ScanFields = {
+    firstName?: string | null;
+    lastName?: string | null;
+    dateOfBirth?: string | null;
+    addressLine?: string | null;
+    postcode?: string | null;
+    licenceNumber?: string | null;
+    expiryDate?: string | null;
+    categories?: string[];
+};
+
+type ScanResult = {
+    requestId: string;
+    selectedEngine?: string;
+    attemptedEngines?: string[];
+    ocrConfidence?: number;
+    processingTimeMs?: number;
+    fields?: ScanFields;
+    validation?: ScanValidation;
+};
+
 export default function CaptureScreen() {
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [flowStep, setFlowStep] = useState<"capture" | "preview">("capture");
-    const [scanRequested, setScanRequested] = useState(false);
+    const [scanResult, setScanResult] = useState<ScanResult | null>(null);
+    const [scanError, setScanError] = useState<string | null>(null);
+    const [isScanning, setIsScanning] = useState(false);
 
     const uploadInputRef = useRef<HTMLInputElement | null>(null);
+    const apiBaseUrl = (
+        process.env.NEXT_PUBLIC_API_BASE_URL?.trim() || "http://localhost:8080"
+    ).replace(/\/$/, "");
 
     const {
         videoRef,
@@ -31,7 +69,9 @@ export default function CaptureScreen() {
     const resetSelection = () => {
         setSelectedImage(null);
         setError(null);
-        setScanRequested(false);
+        setScanResult(null);
+        setScanError(null);
+        setIsScanning(false);
         setFlowStep("capture");
         stopCamera();
 
@@ -44,7 +84,9 @@ export default function CaptureScreen() {
     const selectImage = (file: File) => {
         setSelectedImage(file);
         setError(null);
-        setScanRequested(false);
+        setScanResult(null);
+        setScanError(null);
+        setIsScanning(false);
         setFlowStep("preview");
 
         // If we captured from camera, close it to avoid leaving it running
@@ -61,7 +103,9 @@ export default function CaptureScreen() {
         if (validationError) {
             setSelectedImage(null);
             setError(validationError);
-            setScanRequested(false);
+            setScanResult(null);
+            setScanError(null);
+            setIsScanning(false);
             setFlowStep("capture");
             if (uploadInputRef.current) {
                 uploadInputRef.current.value = "";
@@ -80,6 +124,7 @@ export default function CaptureScreen() {
 
     const handleCapture = async () => {
         setError(null);
+        setScanError(null);
 
         const result = await captureFrame();
         if (!result.ok) {
@@ -90,13 +135,46 @@ export default function CaptureScreen() {
         handleFileSelected(result.file);
     };
 
-    const handleScan = () => {
+    const handleScan = async () => {
         if (!selectedImage) {
             setError("Please upload or capture an image before scanning.");
             return;
         }
+
         setError(null);
-        setScanRequested(true);
+        setScanError(null);
+        setIsScanning(true);
+        setScanResult(null);
+
+        try {
+            const formData = new FormData();
+            formData.append("image", selectedImage);
+
+            const response = await fetch(`${apiBaseUrl}/license/scan`, {
+                method: "POST",
+                body: formData,
+            });
+
+            const payload = (await response.json().catch(() => null)) as
+                | ScanResult
+                | ScanErrorPayload
+                | null;
+
+            if (!response.ok) {
+                const message =
+                    payload && "error" in payload && payload.error?.message
+                        ? payload.error.message
+                        : "Scan failed. Please try again.";
+                setScanError(message);
+                return;
+            }
+
+            setScanResult(payload as ScanResult);
+        } catch {
+            setScanError("Scan failed. Please try again.");
+        } finally {
+            setIsScanning(false);
+        }
     };
 
     const handleStartStop = async () => {
@@ -178,7 +256,9 @@ export default function CaptureScreen() {
                         onChooseAnother={handleChooseAnother}
                         onRetake={handleRetake}
                         onScan={handleScan}
-                        scanRequested={scanRequested}
+                        isScanning={isScanning}
+                        scanError={scanError}
+                        scanResult={scanResult}
                     />
                 )}
             </main>

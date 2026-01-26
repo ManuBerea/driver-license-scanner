@@ -176,6 +176,37 @@
           "response": []
         }
       ]
+    },
+    {
+      "name": "OCR Worker",
+      "item": [
+        {
+          "name": "OCR - Scan",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "image",
+                  "type": "file"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrlOcr}}/ocr",
+              "host": [
+                "{{baseUrlOcr}}"
+              ],
+              "path": [
+                "ocr"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
     }
   ]
 }
