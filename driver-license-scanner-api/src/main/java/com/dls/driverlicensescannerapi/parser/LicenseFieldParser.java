@@ -75,7 +75,7 @@ public final class LicenseFieldParser {
         if (value == null) {
             return null;
         }
-        String sanitized = value.replaceAll("[^A-Za-z0-9,\\.\\s]", "");
+        String sanitized = value.replaceAll("[^\\p{L}\\p{N},\\.\\s]", "");
         return normalize(sanitized);
     }
 
