@@ -6,6 +6,8 @@ import com.dls.driverlicensescannerapi.dto.LicenseFields;
 import com.dls.driverlicensescannerapi.dto.ScanResponse;
 import com.dls.driverlicensescannerapi.dto.ValidationResult;
 import com.dls.driverlicensescannerapi.error.ErrorCatalog;
+import com.dls.driverlicensescannerapi.ocr.OcrClient;
+import com.dls.driverlicensescannerapi.ocr.OcrResult;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -32,6 +34,12 @@ public class ScanController {
     private static final Set<String> ALLOWED_EXTENSIONS =
             Set.of(".jpg", ".jpeg", ".png", ".webp");
 
+    private final OcrClient ocrClient;
+
+    public ScanController(OcrClient ocrClient) {
+        this.ocrClient = ocrClient;
+    }
+
     @PostMapping(
             path = "/scan",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
@@ -44,23 +52,35 @@ public class ScanController {
         String requestId = resolveRequestId(requestIdHeader);
 
         if (image == null || image.isEmpty()) {
-            return errorResponse(requestId, ErrorCatalog.INVALID_IMAGE_CODE, ErrorCatalog.MISSING_IMAGE_MESSAGE);
+            return errorResponse(requestId, ErrorCatalog.MISSING_IMAGE_MESSAGE);
         }
 
         if (image.getSize() > MAX_FILE_BYTES) {
-            return errorResponse(requestId, ErrorCatalog.INVALID_IMAGE_CODE, ErrorCatalog.IMAGE_TOO_LARGE_MESSAGE);
+            return errorResponse(requestId, ErrorCatalog.IMAGE_TOO_LARGE_MESSAGE);
         }
 
         if (!hasAllowedFormat(image)) {
-            return errorResponse(requestId, ErrorCatalog.INVALID_IMAGE_CODE, ErrorCatalog.INVALID_FORMAT_MESSAGE);
+            return errorResponse(requestId, ErrorCatalog.INVALID_FORMAT_MESSAGE);
         }
 
-        ScanResponse response = new ScanResponse(
+        OcrResult ocrResult = ocrClient.scan(image, requestId);
+        ScanResponse response = getScanResponse(ocrResult, requestId);
+
+        return ResponseEntity.ok()
+                .headers(noStoreHeaders())
+                .body(response);
+    }
+
+    private static ScanResponse getScanResponse(OcrResult ocrResult, String requestId) {
+        String selectedEngine = ocrResult.engine();
+        List<String> attemptedEngines = selectedEngine == null ? List.of() : List.of(selectedEngine);
+
+        return new ScanResponse(
                 requestId,
-                "stub",
-                List.of("stub"),
-                0.0,
-                1L,
+                selectedEngine,
+                attemptedEngines,
+                ocrResult.confidence(),
+                ocrResult.processingTimeMs(),
                 new LicenseFields(
                         null,
                         null,
@@ -73,10 +93,6 @@ public class ScanController {
                 ),
                 new ValidationResult(List.of(), List.of())
         );
-
-        return ResponseEntity.ok()
-                .headers(noStoreHeaders())
-                .body(response);
     }
 
     private boolean hasAllowedFormat(MultipartFile image) {
@@ -93,10 +109,10 @@ public class ScanController {
         return contentTypeAllowed || extensionAllowed;
     }
 
-    private ResponseEntity<ErrorResponse> errorResponse(String requestId, String code, String message) {
+    private ResponseEntity<ErrorResponse> errorResponse(String requestId, String message) {
         ErrorResponse response = new ErrorResponse(
                 requestId,
-                new ErrorDetail(code, message)
+                new ErrorDetail(ErrorCatalog.INVALID_IMAGE_CODE, message)
         );
         return ResponseEntity.badRequest()
                 .headers(noStoreHeaders())

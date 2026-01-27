@@ -31,3 +31,8 @@ services:
       X_INTERNAL_KEY: dev-internal-key
       OCR_ENGINE: paddle
     command: ["uvicorn", "main:application", "--host", "0.0.0.0", "--port", "8000"]
+    volumes:
+      - paddleocr-cache:/root/.paddleocr
+
+volumes:
+  paddleocr-cache:
