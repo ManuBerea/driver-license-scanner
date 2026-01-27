@@ -142,7 +142,7 @@ Implement `/health` and `/ocr` endpoints in `ocr-worker/main.py`, create OCR eng
 ### Step 5: Build deterministic parser and validator modules
 **Tickets: T12, T15**
 
-Create `UkLicenseParser` in `parser/` extracting firstName/lastName/dateOfBirth/addressLine/postcode/licenceNumber/expiryDate using regex/heuristics with date normalization, create `UkLicenseValidator` in `validator/` implementing blocking errors (expired/missing fields/invalid postcode/license format) and warnings (age 21-75), write JUnit tests for both.
+Create `UkLicenseParser` in `parser/` extracting firstName/lastName/dateOfBirth/addressLine (includes postcode)/licenceNumber/expiryDate using regex/heuristics with date normalization, create `UkLicenseValidator` in `validator/` implementing blocking errors (expired/missing fields/invalid postcode in address line/license format) and warnings (age 21-75), write JUnit tests for both.
 
 **Actions:**
 - Create `UkLicenseParser.java`:
@@ -150,13 +150,13 @@ Create `UkLicenseParser` in `parser/` extracting firstName/lastName/dateOfBirth/
   - Extract required fields using deterministic regex/heuristics:
     - firstName, lastName (common patterns on UK licenses)
     - dateOfBirth (DD/MM/YYYY or similar formats)
-    - addressLine, postcode (UK postcode regex)
+    - addressLine (includes postcode)
     - licenceNumber (UK license format: AAAAA######A##AA)
     - expiryDate (date formats)
     - categories (optional, e.g., "A", "B", "C")
   - Normalize:
     - Whitespace (trim, collapse multiple spaces)
-    - Dates to ISO format `YYYY-MM-DD`
+    - Dates to UK format `DD.MM.YYYY`
     - Casing where appropriate (uppercase for license number)
   - Return null/empty for unknown fields (no guessing)
   - Never throw unhandled exceptions (safe failure)
@@ -166,9 +166,9 @@ Create `UkLicenseParser` in `parser/` extracting firstName/lastName/dateOfBirth/
 - Create `UkLicenseValidator.java`:
   - `validate(LicenseFields fields) -> ValidationResult`
   - Blocking errors:
-    - Missing required fields (firstName, lastName, dateOfBirth, postcode, licenceNumber, expiryDate)
+    - Missing required fields (firstName, lastName, dateOfBirth, addressLine, licenceNumber, expiryDate)
     - Expired license (expiryDate in the past)
-    - Invalid UK postcode format
+    - Invalid UK postcode format in address line
     - Invalid UK license number format
   - Warnings:
     - Age outside 21-75 range (calculate from dateOfBirth)
@@ -204,7 +204,7 @@ Create driver form component in `web/src/app/` auto-filling from API response, d
 - Create driver form component:
   - Use React Hook Form for form state management
   - Use Zod for schema validation
-  - Fields: firstName, lastName, dateOfBirth, addressLine, postcode, licenceNumber, expiryDate, categories
+  - Fields: firstName, lastName, dateOfBirth, addressLine, licenceNumber, expiryDate, categories
   - All fields editable (text inputs)
   - Populate fields from API `fields` response
   - Mark required fields visually
@@ -313,11 +313,10 @@ Build `data/synthetic/` folders (clean/medium/poor with 10 images each) plus `gr
     "fields": {
       "firstName": "JOHN",
       "lastName": "SMITH",
-      "dateOfBirth": "1990-01-13",
-      "addressLine": "1 HIGH STREET",
-      "postcode": "SW1A 1AA",
+      "dateOfBirth": "13.01.1990",
+      "addressLine": "1 HIGH STREET, SW1A 1AA",
       "licenceNumber": "SMITH901133J99AB",
-      "expiryDate": "2030-01-13",
+      "expiryDate": "13.01.2030",
       "categories": ["A", "B"]
     }
   }
@@ -720,7 +719,7 @@ NEXT_PUBLIC_API_URL=https://api.staging.example.com
 - [ ] Deterministic parser extracts 7 required fields
 - [ ] Validation blocks expired licenses
 - [ ] Validation enforces required fields
-- [ ] UK postcode format validated
+- [ ] UK postcode format validated in address line
 - [ ] UK license number format validated
 - [ ] Age warning (21-75) implemented
 - [ ] Form auto-fills from API response

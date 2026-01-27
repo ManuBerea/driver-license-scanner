@@ -21,7 +21,7 @@ The system extracts and returns these required fields when present and readable:
 - First name
 - Last name
 - Date of birth
-- Address (line + postcode)
+- Address line (includes postcode)
 - Licence number
 - Expiry date
 
@@ -36,7 +36,7 @@ If a field cannot be found, the system returns **null/empty**, not a guess.
 The backend enforces:
 - Licence expiry **blocks submission**
 - Required fields must be present before save
-- UK postcode format validation
+- UK postcode format validation in address line
 - UK licence number format validation
 - Age between 21–75 validation
 

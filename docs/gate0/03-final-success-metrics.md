@@ -13,7 +13,7 @@ These metrics define whether the POC is considered successful.
   - First name
   - Last name
   - Date of birth
-  - Address line + postcode
+  - Address line (includes postcode)
   - License number
   - Expiry date
 

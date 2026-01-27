@@ -26,7 +26,7 @@
 **Owns**
 - deterministic conversion of OCR output → structured fields:
   - firstName, lastName, dateOfBirth
-  - addressLine, postcode
+  - addressLine (includes postcode)
   - licenceNumber, expiryDate
   - categories (optional)
 
@@ -50,7 +50,7 @@
 - backend authoritative validation rules:
   - expiry must not be in the past (blocking)
   - required fields must exist before save (blocking)
-  - UK postcode format (blocking)
+  - UK postcode format in address line (blocking)
   - UK licence number format (blocking)
   - age between 21–75 (warning)
 

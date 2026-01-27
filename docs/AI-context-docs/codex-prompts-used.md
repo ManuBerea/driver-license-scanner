@@ -285,13 +285,13 @@ Parse OCR lines into structured fields deterministically.
 
 ## Constraints
 - No guessing (unknowns null/empty)
-- Normalize dates to YYYY-MM-DD
+- Normalize dates to DD.MM.YYYY
 - Must not crash on malformed OCR
 
 ## Task
 Extract:
 - firstName, lastName, dateOfBirth
-- addressLine, postcode
+- addressLine (includes postcode)
 - licenceNumber, expiryDate
 Optional: categories
 
@@ -351,7 +351,7 @@ Show editable form auto-filled from scan response + low-confidence warning.
 
 ## Task
 Render editable fields:
-- firstName, lastName, dateOfBirth, addressLine, postcode, licenceNumber, expiryDate
+- firstName, lastName, dateOfBirth, addressLine, licenceNumber, expiryDate
 Populate from scan response.
 Show warning banner if confidence below threshold.
 

@@ -28,12 +28,11 @@ class LicenseFieldParserTest {
 
         assertEquals("ANDREA JOAN", fields.firstName());
         assertEquals("CAMPBELL", fields.lastName());
-        assertEquals("1964-07-05", fields.dateOfBirth());
-        assertEquals("2031-11-30", fields.expiryDate());
+        assertEquals("05.07.1964", fields.dateOfBirth());
+        assertEquals("30.11.2031", fields.expiryDate());
         assertEquals("99999999", fields.licenceNumber());
-        assertEquals("123 CASTLEROCK ROAD, COLERAINE, CO. LONDONDERRY", fields.addressLine());
-        assertEquals("BT51 3TB", fields.postcode());
-        assertEquals(List.of("AM", "B1", "E"), fields.categories());
+        assertEquals("123 CASTLEROCK ROAD, COLERAINE CO. LONDONDERRY, BT51 3TB", fields.addressLine());
+        assertEquals(List.of("AM", "B1"), fields.categories());
     }
 
     @Test
@@ -46,7 +45,6 @@ class LicenseFieldParserTest {
         assertNull(fields.lastName());
         assertNull(fields.dateOfBirth());
         assertNull(fields.addressLine());
-        assertNull(fields.postcode());
         assertNull(fields.licenceNumber());
         assertNull(fields.expiryDate());
         assertEquals(List.of(), fields.categories());
@@ -65,21 +63,23 @@ class LicenseFieldParserTest {
                 new OcrLine("99999999", 0.95),
                 new OcrLine("8.", 0.95),
                 new OcrLine("123 CASTLEROCK ROAD, COLERAINE", 0.95),
+                new OcrLine("E", 0.95),
                 new OcrLine("CO. LONDONDERRY", 0.95),
+                new OcrLine("NOV31", 0.95),
                 new OcrLine("BT513TB", 0.95),
                 new OcrLine("9.", 0.95),
-                new OcrLine("AMA/B1/E//K/p/g", 0.95)
+                new OcrLine("AM/A/B1/B/f/k//n/p/q", 0.95)
         );
 
         LicenseFields fields = LicenseFieldParser.parse(lines);
 
         assertEquals("ANDREA JOAN", fields.firstName());
-        assertEquals("CAMPBELL", fields.lastName());
-        assertEquals("1964-07-05", fields.dateOfBirth());
-        assertEquals("2031-11-30", fields.expiryDate());
+        assertNull(fields.lastName());
+        assertNull(fields.dateOfBirth());
+        assertEquals("30.11.2031", fields.expiryDate());
         assertEquals("99999999", fields.licenceNumber());
-        assertEquals("123 CASTLEROCK ROAD, COLERAINE, CO. LONDONDERRY", fields.addressLine());
-        assertEquals("BT51 3TB", fields.postcode());
-        assertEquals(List.of("AMA", "B1", "E", "K", "P", "G"), fields.categories());
+        assertEquals("123 CASTLEROCK ROAD, COLERAINE, E, CO. LONDONDERRY, NOV31, BT51 3TB",
+                fields.addressLine());
+        assertEquals(List.of("AM", "A", "B1", "B", "f", "k", "n", "p", "q"), fields.categories());
     }
 }

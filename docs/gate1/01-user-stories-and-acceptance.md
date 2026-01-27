@@ -151,7 +151,7 @@ This document contains a set of **15 user stories** with **testable acceptance c
 - First name
 - Last name
 - Date of birth
-- Address line + postcode
+- Address line (includes postcode)
 - Licence number
 - Expiry date
 - (Optional) licence categories
@@ -160,7 +160,7 @@ This document contains a set of **15 user stories** with **testable acceptance c
 - Parser returns structured JSON with expected field names
 - Parser normalizes:
   - whitespace
-  - date formats into consistent ISO or DD/MM/YYYY
+  - date formats into consistent UK DD.MM.YYYY
   - uppercase/lowercase where needed
 - If a field cannot be found, returns **null or empty string** (no guessing)
 - Parser never throws unhandled exceptions (safe failure)
@@ -206,14 +206,14 @@ This document contains a set of **15 user stories** with **testable acceptance c
 **Validation rules**
 - Licence expiry blocks submission
 - Required fields must be present
-- UK postcode must be valid format
+- UK postcode in address line must be valid format
 - UK licence number must match format
 - Age rule: outside 21–75 → warning
 
 **Acceptance Criteria**
 - Submission is blocked if any required field is missing
 - Submission is blocked if licence is expired
-- Invalid postcode blocks submission with clear error message
+- Invalid postcode in address line blocks submission with clear error message
 - Invalid licence number blocks submission with clear error message
 - Age rule behavior implemented consistently (warn or block per definition)
 - Validation errors are shown next to relevant fields

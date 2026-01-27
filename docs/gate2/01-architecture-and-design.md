@@ -33,7 +33,7 @@ flowchart LR
     OCRDecision -- Yes --> Parse["API: Parser Module"]
     OCRDecision -- No + fallback on --> Fallback
     OCRDecision -- No + fallback off --> Parse
-    Parse --> Fields["Parsed Fields<br>name, DOB, address, postcode,<br>licenceNo, expiry"]
+    Parse --> Fields["Parsed Fields<br>name, DOB, address (incl. postcode),<br>licenceNo, expiry"]
     Fields --> Validate["API: Validator Module"]
     Validate --> ValOut["Validation Result<br>blockingErrors[] + warnings[]"]
     ValOut --> Response["API Response Contract<br>fields + validation + metadata<br>Cache-Control: no-store"]
@@ -226,7 +226,6 @@ classDiagram
     +lastName: string?
     +dateOfBirth: string?
     +addressLine: string?
-    +postcode: string?
     +licenceNumber: string?
     +expiryDate: string?
     +categories: string[]?
@@ -282,14 +281,14 @@ classDiagram
 4. **Parsing (API)**
    - Deterministic parser extracts:
      - firstName, lastName, dateOfBirth
-     - addressLine, postcode
+     - addressLine (includes postcode)
      - licenceNumber, expiryDate
      - optional categories
    - Unknowns return null/empty (no guessing)
 
 5. **Validation (API)**
    - Required fields present
-   - Postcode format valid
+  - Postcode format valid in address line
    - Licence number format valid
    - Expiry date not in the past (block)
    - Age outside 21–75 (warning)

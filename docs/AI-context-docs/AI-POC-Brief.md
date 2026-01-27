@@ -58,7 +58,7 @@ Fields to extract
 First name
 Last name
 Date of birth
-Address (line + postcode)
+Address line (includes postcode)
 License number
 Expiry date
 License categories (optional)
@@ -67,7 +67,7 @@ Validation rules
 UK license number format
 Age between 21–75 (warning or error as defined)
 License must not be expired
-Valid UK postcode
+Valid UK postcode present in address line
 Required fields must be present before save
 
 ## 7. SDLC Gated Delivery Plan
