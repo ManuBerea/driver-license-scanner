@@ -3,14 +3,18 @@ from fastapi.responses import JSONResponse
 from uuid import uuid4
 import logging
 import os
+from io import BytesIO
+
+from PIL import Image
 
 from core.models import ErrorResponse, OcrResponse
 from core.responses import error_response
+from core.settings import env_bool
 from ocr_engines import OcrEngineError
 from services.image_loader import ImageValidationError
 from services.ocr_service import run_ocr
 
-logger = logging.getLogger("ocr-worker")
+logger = logging.getLogger("uvicorn.error")
 
 
 def create_app() -> FastAPI:
@@ -19,6 +23,20 @@ def create_app() -> FastAPI:
     @app.get("/health")
     async def health() -> dict:
         return {"status": "ok"}
+
+    @app.on_event("startup")
+    async def warmup_ocr() -> None:
+        if not env_bool(os.getenv("OCR_WARMUP"), True):
+            logger.info("ocr_warmup disabled")
+            return
+        try:
+            image = Image.new("RGB", (32, 32), color=(255, 255, 255))
+            buffer = BytesIO()
+            image.save(buffer, format="JPEG")
+            run_ocr(str(uuid4()), buffer.getvalue())
+            logger.info("ocr_warmup complete")
+        except Exception:
+            logger.warning("ocr_warmup failed", exc_info=True)
 
     @app.post("/ocr", response_model=OcrResponse, responses={
         400: {"model": ErrorResponse},
