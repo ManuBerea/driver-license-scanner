@@ -179,11 +179,11 @@ Wire the Scan button to the API and display results with a user-friendly retry p
 Upgrade OCR worker from stub to real OCR with PaddleOCR, add engine abstraction.
 
 **What I asked**  
-Implement PaddleOCR + engine selection (paddle/doctr placeholders), protect `/ocr` with `X-INTERNAL-KEY`, keep images in memory, avoid PII logs, and add tests.
+Implement PaddleOCR + engine selection (paddle + cloud placeholders), protect `/ocr` with `X-INTERNAL-KEY`, keep images in memory, avoid PII logs, and add tests.
 
 **What AI suggested**  
-- Add `ocr_engines` with PaddleOCR + docTR implementations  
-- Use `OCR_ENGINE` env to select engine  
+- Add `ocr_engines` with PaddleOCR implementation  
+- Use `OCR_ENGINE` env to select engine
 - Enforce `X-INTERNAL-KEY` auth  
 - Return `lines[]`, confidence, timing  
 - Add lightweight tests with a fake engine  

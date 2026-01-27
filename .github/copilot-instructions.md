@@ -70,7 +70,7 @@ OCR worker protection:
 - Internal network if possible; otherwise require `X-INTERNAL-KEY`.
 
 ## Feature flags (safe defaults)
-- `OCR_ENGINE=paddle|doctr|vision|textract` (default: `paddle`)
+- `OCR_ENGINE=paddle|vision` (default: `paddle`)
 - `ENABLE_FALLBACK_OCR=false`
 - `OCR_CONFIDENCE_WARN_THRESHOLD=0.70`
 - `ENABLE_LLM_CLEANUP=false` (off by default)
@@ -105,7 +105,7 @@ Inside `driver-license-scanner-api/` keep these roles:
 ### Bounded fallback attempts (prevent retry loops)
 If `ENABLE_FALLBACK_OCR=true`, retries are limited:
 - `MAX_FALLBACK_ATTEMPTS=2` (default)
-- Fallback order: `paddle → doctr → vision → textract`
+- Fallback order: `paddle → vision`
 - Stop early if required fields are filled OR confidence ≥ threshold
 
 ## How the agent should work

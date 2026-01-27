@@ -67,13 +67,12 @@ Frontend:
 
 Backend:
 - Spring Boot 3 (API orchestration + validation + metrics)
-- FastAPI OCR worker (OpenCV + PaddleOCR/docTR)
+- FastAPI OCR worker (OpenCV + PaddleOCR)
 - Feature flags via environment variables
 
 OCR / AI:
 - OCR primary: PaddleOCR
-- Optional benchmark: docTR
-- Optional fallback engines behind flags: Google Vision OCR / AWS Textract
+- Fallback engines behind flags: Google Vision OCR
 - Parsing: deterministic parser (regex/heuristics) first
 - Optional LLM cleanup behind flags (Gemini/OpenAI)
 

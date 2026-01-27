@@ -1,8 +1,8 @@
-# Gate 3 — Backlog (20 AI-Agent-Ready Tickets)
+# Gate 3 - Backlog (20 AI-Agent-Ready Tickets)
 
-# v0 — Capture + Preview + Raw OCR Output
+# v0 - Capture + Preview + Raw OCR Output
 
-## T1 — Monorepo baseline + docs scaffold
+## T1 - Monorepo baseline + docs scaffold
 
 ### Goal
 Create a clean monorepo foundation (folders + ignore rules + docs index).
@@ -13,7 +13,7 @@ We are building 3 services in one repo and must keep gates documentation under `
 ### Task
 - Ensure root repo contains:
   - `.gitignore` ignoring `.env`, `.venv`, `node_modules`, build outputs
-  - `docs/README.md` index linking gates 0–5
+  - `docs/README.md` index linking gates
   - folders: `web/`, `driver-license-scanner-api/`, `ocr-worker/`
 
 ### Requirements
@@ -22,12 +22,12 @@ We are building 3 services in one repo and must keep gates documentation under `
 
 ### Acceptance Criteria
 - No nested git repos inside subfolders (no `web/.git/`)
-- Repo structure matches “Global constraints” above
+- Repo structure matches Global constraints above
 - `git status` shows only source files (not virtualenv / node_modules)
 
 ---
 
-## T2 — Docker Compose: run all services locally (dev parity)
+## T2 - Docker Compose: run all services locally (dev parity)
 
 ### Goal
 Enable 1-command local boot for Web + API + OCR worker.
@@ -37,9 +37,9 @@ We need 1-command local run for fast iteration.
 
 ### Task
 Create root `docker-compose.yml` with 3 services:
-- `web` → port 3000
-- `api` → port 8080
-- `ocr-worker` → port 8000
+- `web` - port 3000
+- `api` - port 8080
+- `ocr-worker` - port 8000
 
 ### Requirements
 - `docker compose up --build` starts all 3 services
@@ -57,7 +57,7 @@ Create root `docker-compose.yml` with 3 services:
 
 ---
 
-## T3 — Web: capture/upload licence image
+## T3 - Web: capture/upload licence image
 
 ### Goal
 User can capture via webcam OR upload a licence image.
@@ -73,7 +73,7 @@ Implement UI that supports:
 
 ### Requirements
 - Allowed formats: `.jpg .jpeg .png .webp`
-- Max file size: 5–10MB
+- Max file size: 10MB
 - Clear, user-friendly error message on invalid inputs
 
 ### Acceptance Criteria
@@ -83,7 +83,7 @@ Implement UI that supports:
 
 ---
 
-## T4 — Web: preview + retry before scan
+## T4 - Web: preview + retry before scan
 
 ### Goal
 User previews the image and can retry before sending to backend.
@@ -94,11 +94,11 @@ Preview + retry improves OCR accuracy and matches the required user flow.
 ### Task
 Add a preview screen with:
 - Image preview
-- Retry controls: “Choose another” / “Retake”
-- “Scan” button that triggers the backend call
+- Retry controls: Choose another / Retake
+- Scan button that triggers the backend call
 
 ### Requirements
-- Do not upload automatically; only upload when user clicks “Scan”
+- Do not upload automatically; only upload when user clicks Scan
 - Retry works without refreshing the page
 
 ### Acceptance Criteria
@@ -108,7 +108,7 @@ Add a preview screen with:
 
 ---
 
-## T5 — API: `/license/scan` endpoint (stub response)
+## T5 - API: `/license/scan` endpoint (stub response)
 
 ### Goal
 Accept image upload and return a valid response contract (stubbed at first).
@@ -134,7 +134,7 @@ Create `POST /license/scan` that:
 
 ---
 
-## T6 — OCR Worker: `/health` + `/ocr` endpoint (stub)
+## T6 - OCR Worker: `/health` + `/ocr` endpoint (stub)
 
 ### Goal
 Provide an OCR service surface area so the API can integrate.
@@ -144,7 +144,7 @@ OCR runs server-side; this worker should never persist images.
 
 ### Task
 Implement:
-- `GET /health` → `200 { "status": "ok" }`
+- `GET /health` - `200 { "status": "ok" }`
 - `POST /ocr` accepts multipart `image` and returns stub:
 ```json
 {
@@ -166,7 +166,7 @@ Implement:
 
 ---
 
-## T7 — Web: call scan API + loading/error/retry UX
+## T7 - Web: call scan API + loading/error/retry UX
 
 ### Goal
 User can press Scan, wait, see results, or retry on failure.
@@ -175,7 +175,7 @@ User can press Scan, wait, see results, or retry on failure.
 Errors must be user-friendly and the user must be able to retry without refresh.
 
 ### Task
-Wire the “Scan” button to:
+Wire the Scan button to:
 - POST multipart to `/license/scan`
 - Show loading state until response
 - On error, show message + allow retry
@@ -191,9 +191,9 @@ Wire the “Scan” button to:
 
 ---
 
-# v0.1 — Real OCR + Parsing + Auto-fill Form
+# v0.1 - Real OCR + Parsing + Auto-fill Form
 
-## T8 — OCR Worker: PaddleOCR integration
+## T8 - OCR Worker: PaddleOCR integration
 
 ### Goal
 Return real OCR `lines[]`, confidence, and timing.
@@ -218,7 +218,7 @@ Integrate PaddleOCR in `/ocr`:
 
 ---
 
-## T9 — OCR engine selection abstraction (+ docTR + cloud placeholders)
+## T9 - OCR engine selection abstraction (+ docTR + cloud placeholders)
 
 ### Goal
 Support selecting OCR engines via config to enable later benchmarking.
@@ -228,23 +228,22 @@ POC must compare multiple OCR engines; cloud engines must be opt-in.
 
 ### Task
 Implement OCR engine selection with env/config:
-- `OCR_ENGINE=paddle|doctr|vision|textract` (default `paddle`)
-- Implement docTR engine (local)
-- Add placeholders for Vision/Textract behind explicit enable flags
+- `OCR_ENGINE=paddle|vision` (default `paddle`)
+- Add placeholders for Vision behind explicit enable flags
 
 ### Requirements
-- Vision/Textract must be **disabled by default**
+- Vision must be **disabled by default**
 - If a cloud engine is selected without credentials, return `OCR_FAILED` gracefully
 - Common `OcrResult` response shape for all engines
 - No PII logs
 
 ### Acceptance Criteria
-- Switching `OCR_ENGINE` changes engine behavior (paddle/doctr)
+- Switching `OCR_ENGINE` changes engine behavior (paddle/vision)
 - Selecting cloud engine without enable+keys fails gracefully (no crash)
 
 ---
 
-## T10 — API: OCR client calls worker (internal)
+## T10 - API: OCR client calls worker (internal)
 
 ### Goal
 API calls OCR worker reliably with safe failure handling.
@@ -253,12 +252,12 @@ API calls OCR worker reliably with safe failure handling.
 The web app must only talk to the API. API talks to OCR worker.
 
 ### Task
-Implement API → OCR worker call:
+Implement API - OCR worker call:
 - Use env var `OCR_WORKER_URL`
 - Add internal auth header `X-INTERNAL-KEY`
 - Implement timeout + error mapping:
-  - timeout → `OCR_TIMEOUT`
-  - failure → `OCR_FAILED`
+  - timeout - `OCR_TIMEOUT`
+  - failure - `OCR_FAILED`
 
 ### Requirements
 - Never log OCR text or parsed fields
@@ -270,7 +269,7 @@ Implement API → OCR worker call:
 
 ---
 
-## T11 — API: deterministic parser to required fields
+## T11 - API: deterministic parser to required fields
 
 ### Goal
 Extract structured driver fields from OCR output without guessing.
@@ -298,7 +297,7 @@ Optional: categories
 
 ---
 
-## T12 — API: scan response contract (fields + validation + headers)
+## T12 - API: scan response contract (fields + validation + headers)
 
 ### Goal
 Return stable scan response to the web app.
@@ -326,7 +325,7 @@ Update `/license/scan` to:
 
 ---
 
-## T13 — Web: editable driver form + low-confidence warning
+## T13 - Web: editable driver form + low-confidence warning
 
 ### Goal
 Auto-fill an editable form and warn users on low confidence.
@@ -343,7 +342,7 @@ User must be able to correct OCR mistakes and review low-confidence scans.
 - The warning threshold must be configurable (do not hardcode 0.70 in UI)
   - Use a value provided by API OR a config value sent by backend
 - Show warning text exactly:
-  **“Low confidence — please review fields”**
+  **Low confidence - please review fields**
 - Highlight missing required fields
 
 ### Acceptance Criteria
@@ -353,9 +352,9 @@ User must be able to correct OCR mistakes and review low-confidence scans.
 
 ---
 
-# v1 — Validation + Fallback + Quality + Benchmarking + Deployment
+# v1 - Validation + Fallback + Quality + Benchmarking + Deployment
 
-## T14 — API: backend validation rules (blocking + warnings)
+## T14 - API: backend validation rules (blocking + warnings)
 
 ### Goal
 Validate extracted/user-edited fields and return structured validation results.
@@ -365,11 +364,11 @@ Validation must prevent invalid submissions and show errors per field.
 
 ### Task
 Implement validation rules:
-- Expiry date in past → blocking error
-- Missing required fields → blocking errors
-- Invalid UK postcode → blocking error
-- Invalid licence number → blocking error
-- Age outside 21–75 → warning
+- Expiry date in past - blocking error
+- Missing required fields - blocking errors
+- Invalid UK postcode - blocking error
+- Invalid licence number - blocking error
+- Age outside 21-75 - warning
 
 ### Requirements
 Return `validation`:
@@ -382,7 +381,7 @@ Return `validation`:
 
 ---
 
-## T15 — Web: field-level errors + block submit when invalid
+## T15 - Web: field-level errors + block submit when invalid
 
 ### Goal
 Display validation errors and prevent submission when blocking errors exist.
@@ -392,7 +391,7 @@ Users must fix issues before completing the flow.
 
 ### Task
 - Display `blockingErrors` next to the relevant input fields
-- Disable “Submit/Save” if blocking errors exist
+- Disable Submit/Save if blocking errors exist
 - Display non-blocking warnings in a banner/list
 
 ### Requirements
@@ -405,7 +404,7 @@ Users must fix issues before completing the flow.
 
 ---
 
-## T16 — API: fallback OCR orchestration (optional, flagged)
+## T16 - API: fallback OCR orchestration (optional, flagged)
 
 ### Goal
 Optionally retry with a different OCR engine when results are poor.
@@ -420,7 +419,7 @@ Implement optional fallback logic:
   - `ocrConfidence < 0.70`, OR
   - required fields missing after parsing, OR
   - OCR fails/timeouts
-- Fallback order (recommended): paddle → doctr → vision → textract
+- Fallback order (recommended): paddle -> vision
 
 ### Requirements
 - Response must include:
@@ -436,7 +435,7 @@ Implement optional fallback logic:
 
 ---
 
-## T17 — Synthetic dataset (30 images) + ground truth
+## T17 - Synthetic dataset (30 images) + ground truth
 
 ### Goal
 Create a safe dataset for evaluation: 10 clean / 10 medium / 10 poor.
@@ -461,16 +460,16 @@ Create:
 
 ---
 
-## T18 — Evaluation harness + OCR engine comparison report
+## T18 - Evaluation harness + OCR engine comparison report
 
 ### Goal
 Generate a repeatable report comparing OCR engines and performance.
 
 ### Context
 POC success requires measurable outcomes:
-- ≥ 85% required-field accuracy
-- ≤ 10s median scan→form time
-- Comparison across engines (Paddle/docTR/Vision/Textract if enabled)
+- = 85% required-field accuracy
+- = 10s median scan-form time
+- Comparison across engines (paddle/vision/Vision if enabled)
 
 ### Task
 Create an evaluation runner that:
@@ -479,7 +478,7 @@ Create an evaluation runner that:
 - computes:
   - per-field accuracy
   - overall required-field accuracy
-  - median and p95 scan→form time
+  - median and p95 scan-form time
   - % scans with confidence < 0.70
 - outputs a markdown report:
   - per engine
@@ -497,7 +496,7 @@ Create an evaluation runner that:
 
 ---
 
-## T19 — Staging deployment + security/privacy checklist verification
+## T19 - Staging deployment + security/privacy checklist verification
 
 ### Goal
 Deploy the POC to staging and verify privacy guarantees.

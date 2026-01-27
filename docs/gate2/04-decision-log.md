@@ -11,7 +11,7 @@
 
 **Why**
 - Spring Boot fits the broader backend ecosystem and validation layer
-- Python has best OCR tooling (OpenCV + PaddleOCR/docTR)
+- Python has best OCR tooling (OpenCV + PaddleOCR)
 - Separation keeps the OCR runtime isolated and replaceable
 
 **Tradeoffs**
@@ -52,7 +52,7 @@
 ## Decision 04 — Fallback OCR only behind flag
 **Choice**
 - `ENABLE_FALLBACK_OCR=false` by default
-- When enabled, fallback order: Paddle → docTR → Vision → Textract
+- When enabled, fallback order: Paddle → Vision
 
 **Why**
 - Keeps POC simple by default and reduces costs/keys dependency

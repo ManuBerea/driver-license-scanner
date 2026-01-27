@@ -11,9 +11,8 @@ Internal OCR service for the Driver License Scanner POC. This service runs OCR i
 ## Environment Variables
 
 - `X_INTERNAL_KEY` (required)
-- `OCR_ENGINE` = `paddle|doctr|vision|textract` (default: `paddle`)
+- `OCR_ENGINE` = `paddle|vision` (default: `paddle`)
 - `ENABLE_VISION_OCR` = `false` (default)
-- `ENABLE_TEXTRACT_OCR` = `false` (default)
 - `ENABLE_OCR_RAW_TEXT` = `false` (default)
 - `MAX_IMAGE_BYTES` = `10485760` (default: 10MB)
 
@@ -23,14 +22,11 @@ PaddleOCR/PaddlePaddle wheels are most reliable on Python 3.10 for Windows and D
 
 ## Dependencies
 
-Default install is Paddle-only. Optional docTR and dev/test dependencies are split out.
+Default install is Paddle-only. Dev/test dependencies are split out.
 
 ```bash
 # Paddle-only runtime
 pip install -r requirements.txt
-
-# Optional docTR support
-pip install -r requirements-doctr.txt
 
 # Dev/test tools
 pip install -r requirements-dev.txt
@@ -60,12 +56,4 @@ Example request:
 curl -X POST http://localhost:8000/ocr \
   -H "X-INTERNAL-KEY: dev-internal-key" \
   -F "image=@path/to/synthetic-license.png"
-```
-
-## Docker (optional docTR)
-
-To build an image with docTR support:
-
-```bash
-docker build --build-arg ENABLE_DOCTR=true -t ocr-worker:doctr .
 ```

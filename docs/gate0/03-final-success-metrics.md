@@ -77,4 +77,4 @@ These metrics define whether the POC is considered successful.
 ## Stretch Metrics (Optional / Nice-to-have)
 - Field-by-field accuracy report
 - Confidence-based UI indicators
-- Performance comparison between OCR approaches (Paddle vs docTR vs Vision vs Textract)
+- Performance comparison between OCR approaches (Paddle vs Vision)

@@ -26,13 +26,9 @@ flowchart LR
     OCRWorkerCall --> Worker["OCR Worker (FastAPI)"]
     Worker --> EngineSelect{"OCR_ENGINE config"}
     EngineSelect -- paddle --> Paddle["PaddleOCR"]
-    EngineSelect -- doctr --> Doctr["docTR"]
     EngineSelect -- vision --> Vision["Google Vision<br>(opt-in flag + creds)"]
-    EngineSelect -- textract --> Textract["AWS Textract<br>(opt-in flag + creds)"]
     Paddle --> OCRResult["OCR Result<br>lines[] + confidence + timing"]
-    Doctr --> OCRResult
     Vision --> OCRResult
-    Textract --> OCRResult
     OCRResult --> OCRDecision{"Confidence / Parse Quality OK?"}
     OCRDecision -- Yes --> Parse["API: Parser Module"]
     OCRDecision -- No + fallback on --> Fallback
@@ -66,9 +62,7 @@ flowchart LR
     Worker:::workerNode
     EngineSelect:::workerNode
     Paddle:::workerNode
-    Doctr:::workerNode
     Vision:::workerNode
-    Textract:::workerNode
     OCRResult:::outputNode
     OCRDecision:::decisionNode
     Parse:::apiNode
@@ -146,13 +140,11 @@ sequenceDiagram
 flowchart LR
 subgraph OptionalCloud["External Cloud OCR"]
 Vision["Google Cloud Vision OCR"]
-Textract["AWS Textract OCR"]
 end
 User["User (Ops / Admin)"] --> Web["Driver License Scanner Web App<br>(Next.js)"]
 Web --> API["Driver License Scanner API<br>(Spring Boot)<br>Orchestrates OCR + parsing + validation"]
 API --> OCRWorker["OCR Worker Service<br>(FastAPI)<br>Runs OCR engines"]
-OCRWorker --> Engines["OCR Engines<br>PaddleOCR (default)<br>docTR (local)<br>Vision/Textract (opt-in)"]
-Engines -.-> Vision & Textract
+OCRWorker --> Engines["OCR Engines<br>PaddleOCR (default)<br>Vision (opt-in)"]
 ```
 
 ---
@@ -170,7 +162,7 @@ flowchart LR
     Person["User"] --> Web["Web App<br>Next.js + TypeScript<br>Capture / Preview / Form"]
     Web -- POST multipart image --> API["API Orchestrator<br>Spring Boot<br>/license/scan"]
     API -- POST /ocr --> Worker["OCR Worker<br>FastAPI<br>/ocr"]
-    Worker --> Engines["OCR Engines<br>PaddleOCR (default)<br>docTR (local)<br>Vision/Textract (opt-in)"]
+    Worker --> Engines["OCR Engines<br>PaddleOCR (default)<br>Vision (opt-in)"]
     API --> Parser["Parser Module<br>Deterministic field extraction"] & Validator["Validator Module<br>Blocking errors + warnings"]
     API -- Response: fields + validation + confidence --> Web
     API --- NoStore & NoPII

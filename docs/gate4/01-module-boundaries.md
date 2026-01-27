@@ -77,7 +77,6 @@ ocr-worker/
     engines/
       base.py                      # OCREngine interface
       paddle_engine.py             # PaddleOCR implementation
-      doctr_engine.py              # optional
     utils/image.py                 # preprocessing helpers
     core/config.py                 # env flags, thresholds
 ```

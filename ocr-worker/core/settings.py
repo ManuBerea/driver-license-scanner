@@ -26,5 +26,4 @@ def max_image_bytes() -> int:
 def get_engine() -> OcrEngine:
     engine_name = os.getenv("OCR_ENGINE", "paddle")
     enable_vision = env_bool(os.getenv("ENABLE_VISION_OCR"), False)
-    enable_textract = env_bool(os.getenv("ENABLE_TEXTRACT_OCR"), False)
-    return resolve_engine(engine_name, enable_vision, enable_textract)
+    return resolve_engine(engine_name, enable_vision)

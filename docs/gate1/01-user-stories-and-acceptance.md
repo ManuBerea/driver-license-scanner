@@ -85,15 +85,13 @@ This document contains a set of **15 user stories** with **testable acceptance c
 
 ---
 
-## Story 06 — OCR engine abstraction + config (Paddle/docTR/Vision/Textract)
+## Story 06 — OCR engine abstraction + config (Paddle/Vision)
 
 **As a** developer  
 **I want** a pluggable OCR engine abstraction  
-**So that** I can switch between PaddleOCR, docTR, Google Vision, and AWS Textract without changing the rest of the pipeline.
 
 **Notes**
 - Primary engine: **PaddleOCR**
-- Fallback engines: **docTR → Google Vision → AWS Textract**
 - All external services behind flags (safe defaults)
 
 **Acceptance Criteria**
@@ -105,9 +103,9 @@ This document contains a set of **15 user stories** with **testable acceptance c
   - `engineName`
   - `processingTimeMs`
   - `perFieldConfidence` (optional, later)
-- Spring Boot can request OCR using `OCR_ENGINE=paddle|doctr|vision|textract`
+- Spring Boot can request OCR using `OCR_ENGINE=paddle|vision`
 - Default engine is **PaddleOCR**
-- Vision/Textract require API keys and are **OFF by default** via flags
+- Vision require API keys and are **OFF by default** via flags
 - Each engine call records **timing and confidence metadata only** (no PII)
 
 ---
@@ -120,9 +118,7 @@ This document contains a set of **15 user stories** with **testable acceptance c
 
 **Fallback order**
 1. PaddleOCR (primary)
-2. docTR
 3. Google Vision (if enabled)
-4. AWS Textract (if enabled)
 
 **Trigger**
 - overall confidence < threshold (e.g. < 0.70), **OR**
@@ -131,9 +127,8 @@ This document contains a set of **15 user stories** with **testable acceptance c
 
 **Acceptance Criteria**
 - System runs PaddleOCR first
-- If trigger condition is met, system tries docTR next
+- If trigger condition is met, system tries Vision next
 - If still below threshold or parsing still fails, tries Google Vision (if enabled)
-- If still failing, tries AWS Textract (if enabled)
 - Final response includes:
   - `selectedEngine`
   - `attemptedEngines[]`
@@ -255,7 +250,7 @@ This document contains a set of **15 user stories** with **testable acceptance c
 
 ---
 
-## Story 14 — OCR engine comparison report (Paddle vs docTR vs Vision vs Textract)
+## Story 14 — OCR engine comparison report (Paddle vs Vision)
 
 **As a** stakeholder  
 **I want** a comparison report across OCR engines  
@@ -263,9 +258,7 @@ This document contains a set of **15 user stories** with **testable acceptance c
 
 **Engines**
 - PaddleOCR
-- docTR
 - Google Vision OCR
-- AWS Textract
 
 **Acceptance Criteria**
 - Synthetic dataset contains ≥ 30 images (10 clean / 10 medium / 10 poor)
@@ -299,7 +292,7 @@ This document contains a set of **15 user stories** with **testable acceptance c
 - For each field, select the value with the highest confidence / best validation score
 
 **Acceptance Criteria**
-- When enabled, system can run 2+ engines (at least Paddle + docTR)
+- When enabled, system can run 2 engines (Paddle + Vision)
 - For each field, a confidence score exists, or a proxy score is computed using validation strength
 - Merged result selects the best candidate per field
 - UI can optionally display “source engine per field” (or at least in debug output)

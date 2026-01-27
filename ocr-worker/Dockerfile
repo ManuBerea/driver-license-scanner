@@ -15,13 +15,10 @@ RUN apt-get update \
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY requirements-doctr.txt ./
-
-ARG ENABLE_DOCTR=false
-RUN if [ "$ENABLE_DOCTR" = "true" ]; then pip install --no-cache-dir -r requirements-doctr.txt; fi
-
 COPY main.py ./
 COPY ocr_engines.py ./
+COPY core ./core
+COPY services ./services
 
 EXPOSE 8000
 

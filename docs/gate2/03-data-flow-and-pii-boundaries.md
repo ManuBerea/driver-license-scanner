@@ -54,9 +54,7 @@ flowchart TB
         Preprocess["Optional preprocessing<br>(OpenCV)"]
         EngineSelect["OCR Engine Selection"]
         Paddle["PaddleOCR (default)"]
-        Doctr["docTR (local)"]
         Vision["Google Vision (cloud)"]
-        Textract["AWS Textract (cloud)"]
         OcrOut["OCR Output<br>PII: OCR TEXT lines[] + confidence"]
   end
  subgraph Legend["PII Data Classes"]
@@ -73,12 +71,10 @@ flowchart TB
     OcrCall --> WorkerIngress
     WorkerIngress --> Preprocess
     Preprocess --> EngineSelect
-    EngineSelect --> Paddle & Doctr
-    EngineSelect -. "opt-in" .-> Vision & Textract
+    EngineSelect --> Paddle
+    EngineSelect -. "opt-in" .-> Vision
     Paddle --> OcrOut
-    Doctr --> OcrOut
     Vision -.-> OcrOut
-    Textract -.-> OcrOut
     OcrOut --> Parse
     Parse --> Validate
     Validate --> ApiResp
@@ -108,9 +104,7 @@ flowchart TB
      Preprocess:::normal
      EngineSelect:::normal
      Paddle:::normal
-     Doctr:::normal
      Vision:::normal
-     Textract:::normal
      OcrOut:::piiText
      WebZone:::normal
     classDef piiImage fill:#FFCDD2,stroke:#C62828,stroke-width:2px

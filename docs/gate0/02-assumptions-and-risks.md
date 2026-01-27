@@ -15,7 +15,7 @@ Mobile photos may have glare, blur, motion, poor exposure, or partial cropping; 
 - Include quality buckets (10 clean / 10 medium / 10 poor) in dataset and measure accuracy separately
 - Provide UI retry (“Retake/Choose another”) before scanning
 - Add preprocessing (OpenCV) early (contrast/deskew/crop assistance)
-- Add fallback OCR engines behind flags (docTR, Vision, Textract)
+- Add fallback OCR engines behind flags (Vision)
 
 ---
 

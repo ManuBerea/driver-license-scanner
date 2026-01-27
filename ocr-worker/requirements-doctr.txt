@@ -1,3 +1,0 @@
-python-doctr==0.8.1
-torch==2.2.2
-torchvision==0.17.2
