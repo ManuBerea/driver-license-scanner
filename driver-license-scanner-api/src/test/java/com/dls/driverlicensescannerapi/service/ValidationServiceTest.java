@@ -5,6 +5,8 @@ import com.dls.driverlicensescannerapi.dto.ValidationResult;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+
+import com.dls.driverlicensescannerapi.validator.ValidationService;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

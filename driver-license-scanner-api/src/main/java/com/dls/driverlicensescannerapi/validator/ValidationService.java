@@ -1,4 +1,4 @@
-package com.dls.driverlicensescannerapi.service;
+package com.dls.driverlicensescannerapi.validator;
 
 import com.dls.driverlicensescannerapi.dto.LicenseFields;
 import com.dls.driverlicensescannerapi.dto.ValidationError;

@@ -4,6 +4,8 @@ import com.dls.driverlicensescannerapi.dto.LicenseFields;
 import com.dls.driverlicensescannerapi.dto.ScanResponse;
 import com.dls.driverlicensescannerapi.ocr.OcrResult;
 import java.util.List;
+
+import com.dls.driverlicensescannerapi.validator.ValidationService;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
