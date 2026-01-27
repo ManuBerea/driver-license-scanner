@@ -268,3 +268,29 @@ Implement an editable form populated from the scan response, show a warning bann
 - Made the warning threshold to come from API and be computed based on the number of fields. Initially the ocr confidence was added from the OCR engine, but it was too permissive..
 - Made fields show their full text (auto-resizing inputs) to avoid truncation.  
 
+---
+
+### Prompt-12 - T14 + T15: Validation + UI errors
+**Context**  
+Add backend validation results and surface them in the UI, while blocking submission when invalid.
+
+**What I asked**  
+Implement validation rules (expiry date, missing required, invalid postcode/licence, age) and return them in `validation`, then show blocking errors per field, list warnings, and disable submit when blocking errors exist.
+
+**What AI suggested**  
+- Add a validation service returning `blockingErrors[]` + `warnings[]`  
+- Map `blockingErrors` to per-field UI errors  
+- Render warnings list in the UI  
+- Disable submit when blocking errors exist  
+
+**What I kept**  
+- Validation service + structured blocking errors  
+- Field-level errors and warnings list  
+- Disable submit when blocking errors exist  
+- Kept **age outside 21–75** as a warning.
+
+**What I changed and why**  
+- Made **missing required fields**, **invalid postcode**, and **invalid licence number** blocking (per requirements).  
+- Added a `Save` (submit) button that is disabled when blocking errors exist, while keeping Scan separate.  
+- Ensured UI remains editable even with errors.  
+- Requested more tests for coverage.
