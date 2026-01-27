@@ -248,7 +248,7 @@ Make parsing simpler and safer, remove postcode from the API contract and add it
 
 ---
 
-### Prompt-11 â€” T13: Web editable driver form + low-confidence warning
+### Prompt-11 - T13: Web editable driver form + low-confidence warning
 **Context**  
 Auto-fill an editable form from the API response and warn users on low-confidence scans.
 
