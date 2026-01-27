@@ -100,7 +100,7 @@ Create `ScanController` in `controller/` accepting multipart image, `ScanService
 ### Step 4: Integrate PaddleOCR and engine abstraction in OCR Worker
 **Tickets: T6, T9, T10**
 
-Implement `/health` and `/ocr` endpoints in `ocr-worker/main.py`, create OCR engine interface with PaddleOCR primary implementation, add docTR + placeholders for Vision/Textract behind `OCR_ENGINE` config, return `lines[]` with confidence and timing, protect with `X-INTERNAL-KEY`.
+Implement `/health` and `/ocr` endpoints in `ocr-worker/main.py`, create OCR engine interface with PaddleOCR primary implementation, placeholders for Vision behind `OCR_ENGINE` config, return `lines[]` with confidence and timing, protect with `X-INTERNAL-KEY`.
 
 **Actions:**
 - Update `main.py` with:
@@ -117,26 +117,22 @@ Implement `/health` and `/ocr` endpoints in `ocr-worker/main.py`, create OCR eng
   - Extract text lines with bounding boxes
   - Calculate overall confidence (average of line confidences)
   - Track processing time
-- Implement docTR engine:
-  - Install `python-doctr` dependency
   - Same interface as PaddleOCR
   - Calculate confidence and timing
 - Add placeholders for cloud engines:
   - `GoogleVisionEngine` (requires `ENABLE_VISION_OCR=true` + credentials)
-  - `TextractEngine` (requires `ENABLE_TEXTRACT_OCR=true` + credentials)
   - Fail gracefully with `OCR_FAILED` if selected without credentials
 - Add configuration via env vars:
-  - `OCR_ENGINE=paddle|doctr|vision|textract` (default: `paddle`)
+  - `OCR_ENGINE=paddle|vision` (default: `paddle`)
   - `X_INTERNAL_KEY` (required)
   - `ENABLE_VISION_OCR=false`
-  - `ENABLE_TEXTRACT_OCR=false`
 - Never persist images to disk
 - Never log image bytes or OCR text (only requestId, engine, confidence, timing)
 
 **Deliverables:**
 - `/health` and `/ocr` endpoints
-- OCR engine abstraction (interface + PaddleOCR + docTR implementations)
-- Cloud engine placeholders (Vision, Textract)
+- OCR engine abstraction (interface + PaddleOCR implementations)
+- Cloud engine placeholders (Vision)
 - Configuration via env vars
 - Internal auth header protection
 - No image persistence, no PII logs
@@ -247,14 +243,14 @@ Create driver form component in `web/src/app/` auto-filling from API response, d
 ### Step 7: Add optional fallback OCR orchestration
 **Tickets: T17**
 
-Create `FallbackOrchestrator` in `service/` behind `ENABLE_FALLBACK_OCR=false` flag with bounded retry logic (paddle→doctr→vision→textract) when confidence <0.70 or required fields missing, track `attemptedEngines[]` and `selectedEngine` in response, limit to `MAX_FALLBACK_ATTEMPTS=2`.
+Create `FallbackOrchestrator` in `service/` behind `ENABLE_FALLBACK_OCR=false` flag with bounded retry logic (paddl->vision) when confidence <0.70 or required fields missing, track `attemptedEngines[]` and `selectedEngine` in response, limit to `MAX_FALLBACK_ATTEMPTS=2`.
 
 **Actions:**
 - Create `FallbackOrchestrator.java`:
   - Check if fallback enabled via `ENABLE_FALLBACK_OCR` env var
   - If disabled, return after first OCR attempt
   - If enabled, implement bounded retry logic:
-    - Fallback order: paddle → doctr → vision → textract
+    - Fallback order: paddle -> vision
     - Max attempts: `MAX_FALLBACK_ATTEMPTS=2` (env var)
     - Trigger conditions:
       - `ocrConfidence < OCR_CONFIDENCE_WARN_THRESHOLD` (default 0.70)
@@ -328,7 +324,7 @@ Build `data/synthetic/` folders (clean/medium/poor with 10 images each) plus `gr
   ```
 - Create evaluation script (Python or Java):
   - Iterate all images in dataset
-  - For each OCR engine (paddle, doctr, vision if enabled, textract if enabled):
+  - For each OCR engine (paddle, vision if enabled):
     - Call `/license/scan` API
     - Compare extracted fields to ground truth
     - Track metrics per field:
@@ -377,7 +373,7 @@ Create Dockerfiles for API and OCR worker, configure Render deployment for both 
     - Health check on `/actuator/health`
   - `ocr-worker/Dockerfile`:
     - Python 3.11+ base image
-    - Install PaddleOCR, docTR, dependencies
+    - Install PaddleOCR, dependencies
     - Expose port 8000
     - Health check on `/health`
   - `web/Dockerfile` (if needed for Render, otherwise Vercel handles):
@@ -460,7 +456,6 @@ Create Dockerfiles for API and OCR worker, configure Render deployment for both 
    - `/health` endpoint
    - `/ocr` endpoint (protected with `X-INTERNAL-KEY`)
    - OCR engine abstraction
-   - PaddleOCR (primary), docTR, Vision, Textract
    - Returns: lines[], confidence, timing
 
 ### Data Flow
@@ -470,7 +465,7 @@ User → Web (capture) → Preview → Scan button
   → API POST /license/scan
   → API validates file
   → API → OCR Worker POST /ocr (with X-INTERNAL-KEY)
-  → OCR Worker runs engine (paddle/doctr/vision/textract)
+  → OCR Worker runs engine (paddle/vision)
   → OCR Worker returns lines[] + confidence
   → API parses fields (UkLicenseParser)
   → API validates fields (UkLicenseValidator)
@@ -564,13 +559,9 @@ ENABLE_LLM_CLEANUP=false
 ### OCR Worker Environment Variables
 ```
 X_INTERNAL_KEY=<secret>
-OCR_ENGINE=paddle|doctr|vision|textract
+OCR_ENGINE=paddle|vision
 ENABLE_VISION_OCR=false
-ENABLE_TEXTRACT_OCR=false
 GOOGLE_APPLICATION_CREDENTIALS=/path/to/gcp-key.json (if vision enabled)
-AWS_ACCESS_KEY_ID=<key> (if textract enabled)
-AWS_SECRET_ACCESS_KEY=<secret> (if textract enabled)
-AWS_REGION=us-east-1 (if textract enabled)
 ```
 
 ### Web Environment Variables
@@ -626,7 +617,7 @@ NEXT_PUBLIC_API_URL=https://api.staging.example.com
 ### Risk 1: OCR accuracy below 85% threshold
 **Mitigation**: 
 - Implement fallback orchestration (T17)
-- Test multiple engines (Paddle, docTR, Vision, Textract)
+- Test multiple engines (Paddle, Vision)
 - Allow manual field correction in form
 - Synthetic dataset includes quality variation
 
@@ -699,11 +690,10 @@ NEXT_PUBLIC_API_URL=https://api.staging.example.com
 ---
 
 ### 4. Cloud OCR Engine Testing
-**Question**: Should evaluation harness (T19) run against cloud engines (Vision, Textract)?
+**Question**: Should evaluation harness (T19) run against cloud engines (Vision)?
 
 **Options**:
 - Include cloud engines in comparison (requires credentials + cost)
-- Local engines only (Paddle + docTR)
 
 **Recommendation**: Local engines for initial evaluation; cloud engines optional if local accuracy is insufficient
 
@@ -726,7 +716,7 @@ NEXT_PUBLIC_API_URL=https://api.staging.example.com
 - [ ] Preview screen with retry works without page refresh
 - [ ] API `/license/scan` returns structured fields + validation
 - [ ] OCR worker protected with `X-INTERNAL-KEY`
-- [ ] PaddleOCR + docTR engines functional
+- [ ] PaddleOCR engines functional
 - [ ] Deterministic parser extracts 7 required fields
 - [ ] Validation blocks expired licenses
 - [ ] Validation enforces required fields

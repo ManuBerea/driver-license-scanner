@@ -171,3 +171,29 @@ Wire the Scan button to the API and display results with a user-friendly retry p
 - Aligned preview layout to compare image vs extracted fields side-by-side
 - Improved UI/UX styling (clearer panels, larger field blocks)
 - Reorganized frontend to have css and js in separate folders
+
+---
+
+### Prompt-8 — OCR worker real OCR + engine abstraction (T8, T9)
+**Context**  
+Upgrade OCR worker from stub to real OCR with PaddleOCR, add engine abstraction.
+
+**What I asked**  
+Implement PaddleOCR + engine selection (paddle + cloud placeholders), protect `/ocr` with `X-INTERNAL-KEY`, keep images in memory, avoid PII logs, and add tests.
+
+**What AI suggested**  
+- Add `ocr_engines` with PaddleOCR implementation  
+- Use `OCR_ENGINE` env to select engine
+- Enforce `X-INTERNAL-KEY` auth  
+- Return `lines[]`, confidence, timing  
+- Add lightweight tests with a fake engine  
+- Add Docker deps for PaddleOCR  
+- Updated README to reflect real behavior
+
+**What I kept**  
+- Everything, but with the following improvements
+
+**What I changed and why**  
+- Set `OCR_ENGINE=paddle` in docker-compose to avoid unsupported `stub` engine  
+- Added size and image validation with 400/413 and clearer errors  
+- Refactored `main.py` into `core/` and `services/` for SRP

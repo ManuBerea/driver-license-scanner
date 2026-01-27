@@ -221,17 +221,16 @@ Implement PaddleOCR:
 ## Prompt-T9 — Worker: engine selection + confidence (minimal)
 ```md
 ## Objective
-Add OCR engine selection (paddle|doctr|vision|textract) with consistent OcrResult output.
+Add OCR engine selection (paddle|vision) with consistent OcrResult output.
 
 ## Constraints
 - Default engine: paddle
-- vision/textract opt-in only; without config -> fail gracefully
+- vision opt-in only; without config -> fail gracefully
 - No PII logs
 - Keep changes minimal (no major refactors)
 
 ## Task
-1) Support `OCR_ENGINE` env: paddle|doctr|vision|textract
-2) Add docTR local engine support
+1) Support `OCR_ENGINE` env: paddle|vision
 3) Add cloud engine placeholders behind flags (return OCR_FAILED if selected without config)
 4) Compute overall confidence deterministically (avg per-line confidence; fallback 0.5 if unavailable)
 
@@ -239,7 +238,6 @@ Add OCR engine selection (paddle|doctr|vision|textract) with consistent OcrResul
 - Engine selection works + shared output shape
 
 ## Verification
-- OCR_ENGINE=doctr works locally
 - OCR_ENGINE=vision fails gracefully without creds/config
 
 ## Stop when
@@ -443,7 +441,7 @@ Fallback triggers if:
 - required fields missing after parsing OR
 - OCR fails/timeouts
 
-Order: paddle → doctr → vision → textract
+Order: paddle → vision
 
 ## Deliverables
 - fallback orchestration

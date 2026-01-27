@@ -98,8 +98,7 @@ Architecture diagram
 Data flow diagram highlighting PII
 Decision log:
 client-side OCR vs server-side
-Why PaddleOCR + docTR + Google Vision + Textract, Why Api calls, Why AI first
-fallback strategy (even if not implemented)
+fallback strategy (Paddle -> Google Vision)
 
 ### Gate 3 – Planning
 Goal: intentional execution.
@@ -179,15 +178,15 @@ React Hook Form + Zod + date-fns
 TailwindCSS
 ### Backend (hybrid)
 Spring Boot 3 (API + orchestration + validation + metrics)
-Python FastAPI OCR worker (OpenCV + PaddleOCR/docTR)
+Python FastAPI OCR worker (OpenCV + PaddleOCR)
 Feature flags via env vars
 ### AI Stack
-OCR: PaddleOCR (primary), docTR (optional benchmark)
+OCR: PaddleOCR (primary)
 Preprocessing: OpenCV (+ Albumentations optional)
 Parsing: deterministic parser (regex/heuristics)
 Validation: backend authoritative rules
 Optional LLM parsing/cleanup behind flags (Gemini/OpenAI)
-Optional fallback OCR: Google Vision and Textract behind flags
+Optional fallback OCR: Google Vision behind flags
 ### Infra / Deploy
 Docker + Render (Spring Boot API + FastAPI OCR worker)
 Vercel (Next.js)

@@ -63,13 +63,12 @@ Frontend:
 
 Backend (hybrid):
 - Spring Boot 3: API orchestration + validation + metrics
-- FastAPI OCR worker: OpenCV + PaddleOCR/docTR
+- FastAPI OCR worker: OpenCV + PaddleOCR
 - Feature flags via env vars
 
 OCR/AI stack:
 - OCR primary: PaddleOCR
-- Optional benchmark: docTR
-- Optional fallback behind flags: Google Vision OCR and AWS Textract
+- Fallback behind flags: Google Vision OCR
 - Parsing: deterministic parser first (regex/heuristics)
 - Optional LLM cleanup/parsing behind flags (Gemini/OpenAI)
 
