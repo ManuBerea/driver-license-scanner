@@ -14,6 +14,8 @@ type PreviewPanelProps = {
   isScanning: boolean;
   scanError: string | null;
   scanResult: ScanResult | null;
+  editableFields: EditableFields;
+  onFieldChange: (field: keyof EditableFields, value: string) => void;
 };
 
 type EditableFields = {
@@ -34,17 +36,10 @@ export function PreviewPanel({
   isScanning,
   scanError,
   scanResult,
+  editableFields,
+  onFieldChange,
 }: PreviewPanelProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [editableFields, setEditableFields] = useState<EditableFields>({
-    firstName: "",
-    lastName: "",
-    dateOfBirth: "",
-    addressLine: "",
-    licenceNumber: "",
-    expiryDate: "",
-    categories: "",
-  });
 
   useEffect(() => {
     const url = URL.createObjectURL(file);
@@ -59,19 +54,6 @@ export function PreviewPanel({
     () => `${file.name} (${formatBytes(file.size)})`,
     [file.name, file.size],
   );
-
-  useEffect(() => {
-    const fields = scanResult?.fields;
-    setEditableFields({
-      firstName: fields?.firstName ?? "",
-      lastName: fields?.lastName ?? "",
-      dateOfBirth: fields?.dateOfBirth ?? "",
-      addressLine: fields?.addressLine ?? "",
-      licenceNumber: fields?.licenceNumber ?? "",
-      expiryDate: fields?.expiryDate ?? "",
-      categories: fields?.categories?.join(", ") ?? "",
-    });
-  }, [scanResult]);
 
   useEffect(() => {
     const textareas = Array.from(
@@ -216,10 +198,7 @@ export function PreviewPanel({
                       rows={1}
                       value={value}
                       onChange={(event) => {
-                        setEditableFields((prev) => ({
-                          ...prev,
-                          [key]: event.target.value,
-                        }));
+                        onFieldChange(key, event.target.value);
                       }}
                       onInput={(event) => {
                         const target = event.currentTarget;
