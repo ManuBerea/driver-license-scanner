@@ -8,6 +8,7 @@ import com.dls.driverlicensescannerapi.dto.ValidationResult;
 import com.dls.driverlicensescannerapi.error.ErrorCatalog;
 import com.dls.driverlicensescannerapi.ocr.OcrClient;
 import com.dls.driverlicensescannerapi.ocr.OcrResult;
+import com.dls.driverlicensescannerapi.parser.LicenseFieldParser;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -75,22 +76,15 @@ public class ScanController {
         String selectedEngine = ocrResult.engine();
         List<String> attemptedEngines = selectedEngine == null ? List.of() : List.of(selectedEngine);
 
+        LicenseFields fields = LicenseFieldParser.parse(ocrResult.lines());
+
         return new ScanResponse(
                 requestId,
                 selectedEngine,
                 attemptedEngines,
                 ocrResult.confidence(),
                 ocrResult.processingTimeMs(),
-                new LicenseFields(
-                        null,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null,
-                        List.of()
-                ),
+                fields,
                 new ValidationResult(List.of(), List.of())
         );
     }
