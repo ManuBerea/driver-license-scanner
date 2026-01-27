@@ -364,10 +364,10 @@ Validation must prevent invalid submissions and show errors per field.
 
 ### Task
 Implement validation rules:
-- Expiry date in past - blocking error (blocks submission)
-- Missing required fields - warning
-- Invalid UK postcode in address line - warning
-- Invalid licence number - warning
+- Expiry date in past - blocking error
+- Missing required fields - blocking error
+- Invalid UK postcode in address line - blocking error
+- Invalid licence number - blocking error
 - Age outside 21-75 - warning
 
 ### Requirements

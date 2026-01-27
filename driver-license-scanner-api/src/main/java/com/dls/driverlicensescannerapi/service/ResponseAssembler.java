@@ -2,7 +2,6 @@ package com.dls.driverlicensescannerapi.service;
 
 import com.dls.driverlicensescannerapi.dto.LicenseFields;
 import com.dls.driverlicensescannerapi.dto.ScanResponse;
-import com.dls.driverlicensescannerapi.dto.ValidationResult;
 import com.dls.driverlicensescannerapi.ocr.OcrResult;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,11 +11,14 @@ import org.springframework.stereotype.Component;
 public class ResponseAssembler {
 
     private final double confidenceThreshold;
+    private final ValidationService validationService;
 
     public ResponseAssembler(
-            @Value("${OCR_CONFIDENCE_WARN_THRESHOLD:0.70}") double confidenceThreshold
+            @Value("${OCR_CONFIDENCE_WARN_THRESHOLD:0.70}") double confidenceThreshold,
+            ValidationService validationService
     ) {
         this.confidenceThreshold = confidenceThreshold;
+        this.validationService = validationService;
     }
 
     public ScanResponse assemble(String requestId, OcrResult ocrResult, LicenseFields fields) {
@@ -32,7 +34,7 @@ public class ResponseAssembler {
                 confidenceThreshold,
                 ocrResult.processingTimeMs(),
                 fields,
-                new ValidationResult(List.of(), List.of())
+                validationService.validate(fields)
         );
     }
 
