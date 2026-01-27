@@ -35,8 +35,14 @@ public final class LicenseFieldParser {
 
         String lastName = extractLabelText(labelIndex, "1", normalizedLines);
         String firstName = extractLabelText(labelIndex, "2", normalizedLines);
+        if (lastName == null) {
+            lastName = fallbackFromPreviousLine(labelIndex, "2", normalizedLines);
+        }
 
         String dateOfBirth = DateParser.findFirstDate(labelIndex.labelRange("3", normalizedLines), true);
+        if (dateOfBirth == null && labelIndex.labelMatch("3").isEmpty()) {
+            dateOfBirth = inferDobBetweenLabels(labelIndex, normalizedLines);
+        }
         String expiryDate = DateParser.findFirstDate(labelIndex.labelRange("4b", normalizedLines), false);
         String licenceNumber = normalizeLicenseNumber(labelIndex.valueFor("5"));
         if (licenceNumber == null) {
@@ -103,10 +109,76 @@ public final class LicenseFieldParser {
                 if (normalized.length() == 1) {
                     continue;
                 }
+                if (normalized.matches("^\\d+$")) {
+                    continue;
+                }
             }
             parts.add(normalized);
         }
         String combined = normalize(String.join(" ", parts));
         return combined.isBlank() ? null : combined;
+    }
+
+    private static String fallbackFromPreviousLine(LabelIndex labelIndex, String label, List<String> lines) {
+        Optional<LabelIndex.LabelMatch> match = labelIndex.labelMatch(label);
+        if (match.isEmpty()) {
+            return null;
+        }
+        int index = match.get().index() - 1;
+        while (index >= 0) {
+            String line = normalize(lines.get(index));
+            if (line.isBlank() || LabelIndex.isLabelLine(line)) {
+                index--;
+                continue;
+            }
+            if (DateParser.containsDate(line)) {
+                index--;
+                continue;
+            }
+            if (line.matches("^\\d+$")) {
+                index--;
+                continue;
+            }
+            return line;
+        }
+        return null;
+    }
+
+    private static String inferDobBetweenLabels(LabelIndex labelIndex, List<String> lines) {
+        Optional<LabelIndex.LabelMatch> labelTwo = labelIndex.labelMatch("2");
+        if (labelTwo.isEmpty()) {
+            return null;
+        }
+        int startIndex = labelTwo.get().index() + 1;
+        int endIndex = Integer.MAX_VALUE;
+
+        Optional<LabelIndex.LabelMatch> label4a = labelIndex.labelMatch("4a");
+        if (label4a.isPresent() && label4a.get().index() > labelTwo.get().index()) {
+            endIndex = Math.min(endIndex, label4a.get().index());
+        }
+        Optional<LabelIndex.LabelMatch> label4b = labelIndex.labelMatch("4b");
+        if (label4b.isPresent() && label4b.get().index() > labelTwo.get().index()) {
+            endIndex = Math.min(endIndex, label4b.get().index());
+        }
+
+        if (endIndex == Integer.MAX_VALUE) {
+            return null;
+        }
+
+        String found = null;
+        for (int i = startIndex; i < endIndex && i < lines.size(); i++) {
+            String line = lines.get(i);
+            if (line.isBlank() || LabelIndex.isLabelLine(line)) {
+                continue;
+            }
+            String date = DateParser.parseDate(Optional.of(line), true);
+            if (date != null) {
+                if (found != null) {
+                    return null;
+                }
+                found = date;
+            }
+        }
+        return found;
     }
 }

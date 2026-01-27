@@ -32,7 +32,7 @@ class LicenseFieldParserTest {
         assertEquals("30.11.2031", fields.expiryDate());
         assertEquals("99999999", fields.licenceNumber());
         assertEquals("123 CASTLEROCK ROAD, COLERAINE, CO. LONDONDERRY, BT51 3TB", fields.addressLine());
-        assertEquals(List.of("AM", "B1"), fields.categories());
+        assertEquals(List.of("AM", "B1", "B"), fields.categories());
     }
 
     @Test
@@ -74,8 +74,8 @@ class LicenseFieldParserTest {
         LicenseFields fields = LicenseFieldParser.parse(lines);
 
         assertEquals("ANDREA JOAN", fields.firstName());
-        assertNull(fields.lastName());
-        assertNull(fields.dateOfBirth());
+        assertEquals("CAMPBELL", fields.lastName());
+        assertEquals("05.07.1964", fields.dateOfBirth());
         assertEquals("30.11.2031", fields.expiryDate());
         assertEquals("99999999", fields.licenceNumber());
         assertEquals("123 CASTLEROCK ROAD, COLERAINE, CO. LONDONDERRY, BT51 3TB", fields.addressLine());

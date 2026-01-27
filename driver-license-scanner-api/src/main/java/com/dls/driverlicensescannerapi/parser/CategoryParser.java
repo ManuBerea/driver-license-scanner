@@ -45,6 +45,15 @@ final class CategoryParser {
             if (token.isBlank()) {
                 continue;
             }
+            if ("AMA".equalsIgnoreCase(token)) {
+                categories.add("AM");
+                categories.add("A");
+                continue;
+            }
+            if ("E".equalsIgnoreCase(token)) {
+                categories.add("B");
+                continue;
+            }
             if ("1".equals(token) || "I".equalsIgnoreCase(token)) {
                 token = "l";
             }

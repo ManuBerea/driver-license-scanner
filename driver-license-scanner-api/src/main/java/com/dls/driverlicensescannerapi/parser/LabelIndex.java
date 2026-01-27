@@ -11,6 +11,9 @@ final class LabelIndex {
     private static final Pattern LABEL_PATTERN =
             Pattern.compile("^(?<label>(?:1|2|3|4a|4b|5|7|8|9))(?=\\s|[\\.)]|$)\\s*[\\.)]?\\s*(?<value>.*)$",
                     Pattern.CASE_INSENSITIVE);
+    private static final Pattern INLINE_LABEL_PATTERN =
+            Pattern.compile("(?<![A-Z0-9])(?<label>(?:1|2|3|4a|4b|5|7|8|9))(?=\\s|[\\.)]|$)",
+                    Pattern.CASE_INSENSITIVE);
 
     private final List<LabelMatch> matches;
 
@@ -20,15 +23,23 @@ final class LabelIndex {
 
     static LabelIndex from(List<String> lines) {
         List<LabelMatch> matches = new ArrayList<>();
-        for (int i = 0; i < lines.size(); i++) {
-            String line = lines.get(i);
-            Matcher matcher = LABEL_PATTERN.matcher(line);
-            if (matcher.matches()) {
-                String label = matcher.group("label").toLowerCase(Locale.ROOT);
-                String value = lineNormalize(matcher.group("value"));
-                matches.add(new LabelMatch(label, value, i));
+            for (int i = 0; i < lines.size(); i++) {
+                String line = lines.get(i);
+                Matcher matcher = LABEL_PATTERN.matcher(line);
+                if (matcher.matches()) {
+                    String label = matcher.group("label").toLowerCase(Locale.ROOT);
+                    String value = lineNormalize(matcher.group("value"));
+                    matches.add(new LabelMatch(label, value, i));
+                } else {
+                    Matcher inline = INLINE_LABEL_PATTERN.matcher(line);
+                    if (inline.find()) {
+                        String label = inline.group("label").toLowerCase(Locale.ROOT);
+                        String value = lineNormalize(line.substring(inline.end())
+                                .replaceFirst("^[\\.)\\s]+", ""));
+                        matches.add(new LabelMatch(label, value, i));
+                    }
+                }
             }
-        }
         return new LabelIndex(matches);
     }
 
