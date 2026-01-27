@@ -22,7 +22,11 @@ final class CategoryParser {
         if (lines.isEmpty()) {
             return List.of();
         }
-        String combined = String.join(" ", lines);
+        boolean hasDelimitedLine = lines.stream().anyMatch(line -> line.contains("/"));
+        List<String> source = hasDelimitedLine
+                ? lines.stream().filter(line -> line.contains("/")).toList()
+                : lines;
+        String combined = String.join(" ", source);
         return parse(combined);
     }
 
@@ -40,6 +44,9 @@ final class CategoryParser {
         for (String token : tokens) {
             if (token.isBlank()) {
                 continue;
+            }
+            if ("1".equals(token) || "I".equalsIgnoreCase(token)) {
+                token = "l";
             }
             String upper = token.toUpperCase(Locale.ROOT);
             if (EU_CODES.contains(upper)) {

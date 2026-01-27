@@ -39,6 +39,13 @@ final class DateParser {
         return day + "." + month + "." + year;
     }
 
+    static boolean containsDate(String value) {
+        if (value == null || value.isBlank()) {
+            return false;
+        }
+        return DATE_PATTERN.matcher(value).find();
+    }
+
     private static String normalizeYear(String raw, boolean isBirthDate) {
         if (raw == null) {
             return null;

@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.ArrayList;
 
 public final class LicenseFieldParser {
 
@@ -94,9 +93,18 @@ public final class LicenseFieldParser {
         List<String> parts = new ArrayList<>();
         for (String line : range) {
             String normalized = normalize(line);
-            if (!normalized.isBlank()) {
-                parts.add(normalized);
+            if (normalized.isBlank()) {
+                continue;
             }
+            if ("1".equals(label) || "2".equals(label)) {
+                if (DateParser.containsDate(normalized)) {
+                    break;
+                }
+                if (normalized.length() == 1) {
+                    continue;
+                }
+            }
+            parts.add(normalized);
         }
         String combined = normalize(String.join(" ", parts));
         return combined.isBlank() ? null : combined;
