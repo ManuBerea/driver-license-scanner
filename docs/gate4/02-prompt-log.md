@@ -226,7 +226,7 @@ Wire the API to the OCR worker, handle failures cleanly, and resolve first-call 
 
 ---
 
-### Prompt-10 - T11: Parser improvements (label-based extraction)
+### Prompt-10 - T11+T12: Parser implementation (label-based extraction)
 **Context**  
 Improve field parsing accuracy from OCR lines while keeping logic deterministic and minimal.
 

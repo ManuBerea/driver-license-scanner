@@ -2,13 +2,9 @@ package com.dls.driverlicensescannerapi.controller;
 
 import com.dls.driverlicensescannerapi.dto.ErrorDetail;
 import com.dls.driverlicensescannerapi.dto.ErrorResponse;
-import com.dls.driverlicensescannerapi.dto.LicenseFields;
 import com.dls.driverlicensescannerapi.dto.ScanResponse;
-import com.dls.driverlicensescannerapi.dto.ValidationResult;
 import com.dls.driverlicensescannerapi.error.ErrorCatalog;
-import com.dls.driverlicensescannerapi.ocr.OcrClient;
-import com.dls.driverlicensescannerapi.ocr.OcrResult;
-import com.dls.driverlicensescannerapi.parser.LicenseFieldParser;
+import com.dls.driverlicensescannerapi.service.ScanService;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -35,10 +31,10 @@ public class ScanController {
     private static final Set<String> ALLOWED_EXTENSIONS =
             Set.of(".jpg", ".jpeg", ".png", ".webp");
 
-    private final OcrClient ocrClient;
+    private final ScanService scanService;
 
-    public ScanController(OcrClient ocrClient) {
-        this.ocrClient = ocrClient;
+    public ScanController(ScanService scanService) {
+        this.scanService = scanService;
     }
 
     @PostMapping(
@@ -64,29 +60,11 @@ public class ScanController {
             return errorResponse(requestId, ErrorCatalog.INVALID_FORMAT_MESSAGE);
         }
 
-        OcrResult ocrResult = ocrClient.scan(image, requestId);
-        ScanResponse response = getScanResponse(ocrResult, requestId);
+        ScanResponse response = scanService.scan(image, requestId);
 
         return ResponseEntity.ok()
                 .headers(noStoreHeaders())
                 .body(response);
-    }
-
-    private static ScanResponse getScanResponse(OcrResult ocrResult, String requestId) {
-        String selectedEngine = ocrResult.engine();
-        List<String> attemptedEngines = selectedEngine == null ? List.of() : List.of(selectedEngine);
-
-        LicenseFields fields = LicenseFieldParser.parse(ocrResult.lines());
-
-        return new ScanResponse(
-                requestId,
-                selectedEngine,
-                attemptedEngines,
-                ocrResult.confidence(),
-                ocrResult.processingTimeMs(),
-                fields,
-                new ValidationResult(List.of(), List.of())
-        );
     }
 
     private boolean hasAllowedFormat(MultipartFile image) {
