@@ -43,12 +43,7 @@ export function PreviewPanel({
 
   const scanFields = useMemo(() => {
     const fields = scanResult?.fields;
-    const addressLine = fields?.addressLine ?? "";
-    const postcode = fields?.postcode ?? "";
-    const addressValue =
-      addressLine || postcode
-        ? [addressLine, postcode].filter(Boolean).join(", ")
-        : "--";
+    const addressValue = fields?.addressLine ?? "--";
     const categoriesValue =
       fields?.categories && fields.categories.length > 0
         ? fields.categories.join(", ")

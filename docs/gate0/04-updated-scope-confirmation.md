@@ -26,7 +26,7 @@ The POC **will include**:
 ### D) Business validation rules
 - License expiry blocks submission
 - Required fields enforced
-- UK postcode format validation
+- UK postcode format validation in address line
 - UK license number format validation
 - Age rule (21–75) implemented consistently (warning)
 

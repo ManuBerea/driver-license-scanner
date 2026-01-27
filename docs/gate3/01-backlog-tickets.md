@@ -280,13 +280,13 @@ POC requires deterministic, testable parsing (no hallucinations).
 ### Task
 Parse OCR `lines[]` into:
 - firstName, lastName, dateOfBirth
-- addressLine, postcode
+- addressLine (includes postcode)
 - licenceNumber, expiryDate
 Optional: categories
 
 ### Requirements
 - Normalize whitespace
-- Normalize dates to ISO format `YYYY-MM-DD`
+- Normalize dates to UK format `DD.MM.YYYY`
 - If uncertain, return null/empty (no guessing)
 - No unhandled exceptions
 
@@ -364,10 +364,10 @@ Validation must prevent invalid submissions and show errors per field.
 
 ### Task
 Implement validation rules:
-- Expiry date in past - blocking error
-- Missing required fields - blocking errors
-- Invalid UK postcode - blocking error
-- Invalid licence number - blocking error
+- Expiry date in past - blocking error (blocks submission)
+- Missing required fields - warning
+- Invalid UK postcode in address line - warning
+- Invalid licence number - warning
 - Age outside 21-75 - warning
 
 ### Requirements

@@ -224,3 +224,22 @@ Wire the API to the OCR worker, handle failures cleanly, and resolve first-call 
 - Added temporary logs to confirm the fix, then removed them for clean code.  
 - Added warm-up + Docker cache volume to prevent first-call timeouts.
 
+---
+
+### Prompt-10 - T11: Parser improvements (label-based extraction)
+**Context**  
+Improve field parsing accuracy from OCR lines while keeping logic deterministic and minimal.
+
+**What I asked**  
+Make parsing simpler and safer, remove postcode from the API contract and add it to the adress, and extract fields using labels with only minimal, high-confidence heuristics.
+
+**What AI suggested**  
+- Keep everything in one large parser file with many heuristics tied to specific OCR patterns.  
+
+**What I kept**  
+- The basic label-driven parsing approach, but asked for it to be refactored.  
+
+**What I changed and why**  
+- Split the huge parser into small parser files for each field and added helpers for SRP and readability.  
+- Kept only generic, safe heuristics that improve accuracy (inline label handling, missing labels).  
+

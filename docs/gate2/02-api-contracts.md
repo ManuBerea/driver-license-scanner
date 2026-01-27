@@ -28,11 +28,10 @@
   "fields": {
     "firstName": "JOHN",
     "lastName": "SMITH",
-    "dateOfBirth": "1990-01-13",
-    "addressLine": "1 HIGH STREET",
-    "postcode": "SW1A 1AA",
+    "dateOfBirth": "13.01.1990",
+    "addressLine": "1 HIGH STREET, SW1A 1AA",
     "licenceNumber": "SMITH901133J99AB",
-    "expiryDate": "2030-01-13",
+    "expiryDate": "13.01.2030",
     "categories": ["A", "AB"]
   },
   "validation": {

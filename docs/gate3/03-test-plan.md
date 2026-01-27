@@ -13,7 +13,7 @@
 2. **Validator unit tests**
    - Expiry blocking
    - Licence number format validation
-   - UK postcode format validation
+   - UK postcode format validation (within address line)
    - Required fields presence
    - Age rule (21–75) behavior
 3. **OCR pipeline integration test (mocked)**

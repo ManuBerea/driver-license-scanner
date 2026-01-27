@@ -32,7 +32,7 @@ Required fields:
 - First name
 - Last name
 - Date of birth
-- Address (line + postcode)
+- Address line (includes postcode)
 - License number
 - Expiry date
 
@@ -43,7 +43,7 @@ Optional:
 - UK license number format validation
 - Age rule: 21–75 
 - License must not be expired (blocks submission)
-- Valid UK postcode format
+- Valid UK postcode format in address line
 - Required fields must exist before save
 
 ## Non-negotiable guardrails (hard constraints)

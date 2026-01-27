@@ -8,7 +8,6 @@ export type ScanFields = {
   lastName?: string | null;
   dateOfBirth?: string | null;
   addressLine?: string | null;
-  postcode?: string | null;
   licenceNumber?: string | null;
   expiryDate?: string | null;
   categories?: string[];

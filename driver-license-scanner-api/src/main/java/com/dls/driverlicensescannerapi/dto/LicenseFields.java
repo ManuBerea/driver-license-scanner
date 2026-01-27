@@ -7,7 +7,6 @@ public record LicenseFields(
         String lastName,
         String dateOfBirth,
         String addressLine,
-        String postcode,
         String licenceNumber,
         String expiryDate,
         List<String> categories
