@@ -5,9 +5,6 @@ spring:
       max-request-size: 10MB
   application:
     name: driver-license-scanner-api
-  profiles:
-    default: local
-
 management:
   endpoints:
     web:

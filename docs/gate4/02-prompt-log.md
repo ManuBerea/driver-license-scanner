@@ -197,3 +197,30 @@ Implement PaddleOCR + engine selection (paddle + cloud placeholders), protect `/
 - Set `OCR_ENGINE=paddle` in docker-compose to avoid unsupported `stub` engine  
 - Added size and image validation with 400/413 and clearer errors  
 - Refactored `main.py` into `core/` and `services/` for SRP
+
+---
+
+### Prompt-9 - T10: API - OCR worker integration
+**Context**  
+Wire the API to the OCR worker, handle failures cleanly, and resolve first-call timeouts.
+
+**What I asked**  
+- Implement OcrClient with timeouts + error mapping.  
+- Fix `INVALID_IMAGE` multipart failures (worker received 0 bytes).  
+- Make the first OCR call stable (avoid timeout during model download).
+
+**What AI suggested**  
+- RestTemplate client with `OCR_WORKER_URL` + `X_INTERNAL_KEY`.  
+- Map timeout to `OCR_TIMEOUT` (504), other failures to `OCR_FAILED` (502).  
+- Send multipart/form-data and add temporary logs to debug payload issues.
+
+**What I kept**  
+- OcrClient + internal auth header.  
+- Timeout/error mapping.  
+- Multipart/form-data approach (after fixing encoding).
+
+**What I changed / directed during troubleshooting**  
+- Verified the worker received **0 bytes**, then forced correct multipart encoding (file part + content type).  
+- Added temporary logs to confirm the fix, then removed them for clean code.  
+- Added warm-up + Docker cache volume to prevent first-call timeouts.
+
