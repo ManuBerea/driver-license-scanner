@@ -5,10 +5,19 @@ import com.dls.driverlicensescannerapi.dto.ScanResponse;
 import com.dls.driverlicensescannerapi.dto.ValidationResult;
 import com.dls.driverlicensescannerapi.ocr.OcrResult;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ResponseAssembler {
+
+    private final double confidenceThreshold;
+
+    public ResponseAssembler(
+            @Value("${OCR_CONFIDENCE_WARN_THRESHOLD:0.70}") double confidenceThreshold
+    ) {
+        this.confidenceThreshold = confidenceThreshold;
+    }
 
     public ScanResponse assemble(String requestId, OcrResult ocrResult, LicenseFields fields) {
         String selectedEngine = ocrResult.engine();
@@ -20,6 +29,7 @@ public class ResponseAssembler {
                 selectedEngine,
                 attemptedEngines,
                 computedConfidence,
+                confidenceThreshold,
                 ocrResult.processingTimeMs(),
                 fields,
                 new ValidationResult(List.of(), List.of())

@@ -18,6 +18,7 @@ export type ScanResult = {
   selectedEngine?: string;
   attemptedEngines?: string[];
   ocrConfidence?: number;
+  confidenceThreshold?: number;
   processingTimeMs?: number;
   fields?: ScanFields;
   validation?: ScanValidation;

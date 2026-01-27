@@ -53,10 +53,10 @@ public final class LicenseFieldParser {
         List<String> categories = CategoryParser.parse(labelIndex.labelRange("9", normalizedLines));
 
         return new LicenseFields(
-                nullIfBlank(firstName),
-                nullIfBlank(lastName),
+                nullIfBlank(sanitizeValue(firstName)),
+                nullIfBlank(sanitizeValue(lastName)),
                 dateOfBirth,
-                nullIfBlank(addressLine),
+                nullIfBlank(sanitizeValue(addressLine)),
                 nullIfBlank(licenceNumber),
                 expiryDate,
                 categories
@@ -71,6 +71,14 @@ public final class LicenseFieldParser {
         return text.replaceAll("\\s+", " ").trim();
     }
 
+    private static String sanitizeValue(String value) {
+        if (value == null) {
+            return null;
+        }
+        String sanitized = value.replaceAll("[^A-Za-z0-9,\\.\\s]", "");
+        return normalize(sanitized);
+    }
+
     private static String nullIfBlank(String value) {
         return value == null || value.isBlank() ? null : value;
     }
@@ -79,7 +87,7 @@ public final class LicenseFieldParser {
         if (value.isEmpty()) {
             return null;
         }
-        String cleaned = value.get().replaceAll("\\s+", "").toUpperCase(Locale.ROOT);
+        String cleaned = value.get().replaceAll("[^A-Za-z0-9]", "").toUpperCase(Locale.ROOT);
         return nullIfBlank(cleaned);
     }
 
@@ -88,7 +96,7 @@ public final class LicenseFieldParser {
             return null;
         }
         String combined = normalize(String.join("", range));
-        String cleaned = combined.replaceAll("\\s+", "").toUpperCase(Locale.ROOT);
+        String cleaned = combined.replaceAll("[^A-Za-z0-9]", "").toUpperCase(Locale.ROOT);
         return nullIfBlank(cleaned);
     }
     private static String extractLabelText(LabelIndex labelIndex, String label, List<String> lines) {

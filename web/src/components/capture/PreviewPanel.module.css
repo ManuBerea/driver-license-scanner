@@ -84,20 +84,29 @@
   @apply mb-3 text-base font-semibold;
 }
 
-.fieldsGrid {
+.warningBanner {
+  @apply mb-4 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-900;
+}
+
+.formGrid {
   @apply grid gap-3 sm:grid-cols-2 content-start;
 }
 
-.fieldItem {
-  @apply rounded-lg bg-white/90 px-3 py-3 shadow-sm;
+.formField {
+  @apply flex flex-col gap-1 rounded-lg bg-white/90 px-3 py-3 shadow-sm;
 }
 
 .fieldLabel {
   @apply text-[11px] uppercase tracking-wide text-emerald-900/70;
 }
 
-.fieldValue {
-  @apply text-base font-medium text-emerald-950;
+.fieldInput {
+  @apply rounded-md border border-emerald-200 bg-white px-3 py-2 text-sm text-emerald-950 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300;
+  @apply resize-none overflow-hidden;
+}
+
+.inputError {
+  @apply border-rose-300 ring-1 ring-rose-200;
 }
 
 .statusInfo {
