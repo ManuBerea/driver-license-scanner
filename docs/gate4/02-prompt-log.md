@@ -226,7 +226,7 @@ Wire the API to the OCR worker, handle failures cleanly, and resolve first-call 
 
 ---
 
-### Prompt-10 - T11: Parser improvements (label-based extraction)
+### Prompt-10 - T11+T12: Parser implementation (label-based extraction)
 **Context**  
 Improve field parsing accuracy from OCR lines while keeping logic deterministic and minimal.
 
@@ -242,4 +242,29 @@ Make parsing simpler and safer, remove postcode from the API contract and add it
 **What I changed and why**  
 - Split the huge parser into small parser files for each field and added helpers for SRP and readability.  
 - Kept only generic, safe heuristics that improve accuracy (inline label handling, missing labels).  
+- Removed `postcode` from the contract and folded it into `addressLine` (joined with “, ”), per requirements.  
+- Kept dates in UK format `dd.MM.yyyy` as they are in the original licenses (no ISO conversion).  
+- Added sanitization to drop special characters (keep letters/digits/comma/dot) for cleaner field output.  
+
+---
+
+### Prompt-11 - T13: Web editable driver form + low-confidence warning
+**Context**  
+Auto-fill an editable form from the API response and warn users on low-confidence scans.
+
+**What I asked**  
+Implement an editable form populated from the scan response, show a warning banner when `ocrConfidence` is below a configurable threshold (from API), highlight missing required fields, and ensure the user can review/correct all fields without refresh.
+
+**What AI suggested**  
+- Render a form after Scan with inputs for each field  
+- Use `ocrConfidence` to conditionally show a warning (when < 5 fields are completed)
+- Highlight missing required fields  
+- Editable form bound to API response fields
+
+**What I kept**  
+- Everything, but with the following improvements 
+
+**What I changed and why**  
+- Made the warning threshold to come from API and be computed based on the number of fields. Initially the ocr confidence was added from the OCR engine, but it was too permissive..
+- Made fields show their full text (auto-resizing inputs) to avoid truncation.  
 

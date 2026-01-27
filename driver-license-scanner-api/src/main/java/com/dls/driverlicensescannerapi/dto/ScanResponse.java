@@ -7,6 +7,7 @@ public record ScanResponse(
         String selectedEngine,
         List<String> attemptedEngines,
         double ocrConfidence,
+        double confidenceThreshold,
         long processingTimeMs,
         LicenseFields fields,
         ValidationResult validation
