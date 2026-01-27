@@ -16,5 +16,14 @@ public final class ErrorCatalog {
     public static final String UNSUPPORTED_MEDIA_TYPE_MESSAGE =
             "Unsupported media type. Use multipart/form-data with an image field.";
 
+    public static final String OCR_TIMEOUT_CODE = "OCR_TIMEOUT";
+    public static final String OCR_FAILED_CODE = "OCR_FAILED";
+
+    public static final String OCR_TIMEOUT_MESSAGE =
+            "OCR service timed out. Please try again.";
+
+    public static final String OCR_FAILED_MESSAGE =
+            "OCR service failed. Please try again.";
+
     private ErrorCatalog() {}
 }

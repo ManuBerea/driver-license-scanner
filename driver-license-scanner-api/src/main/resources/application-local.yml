@@ -1,0 +1,3 @@
+OCR_WORKER_URL: http://localhost:9999
+X_INTERNAL_KEY: dev-internal-key
+

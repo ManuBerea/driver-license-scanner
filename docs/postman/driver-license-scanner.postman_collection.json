@@ -149,7 +149,7 @@
       "name": "Scan",
       "item": [
         {
-          "name": "API - License Scan",
+          "name": "API - License Scan (worker up)",
           "request": {
             "method": "POST",
             "header": [],
@@ -171,9 +171,115 @@
                 "license",
                 "scan"
               ]
-            }
+            },
+            "description": "Use when OCR worker is running. Expect 200 with stub response (T12 not wired yet)."
           },
-          "response": []
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API - License Scan (worker down)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "image",
+                  "type": "file"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrlApi}}/license/scan",
+              "host": [
+                "{{baseUrlApi}}"
+              ],
+              "path": [
+                "license",
+                "scan"
+              ]
+            },
+            "description": "Stop OCR worker before running. Expect 504 OCR_TIMEOUT."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 504', function () {",
+                  "  pm.response.to.have.status(504);",
+                  "});",
+                  "var body = {};",
+                  "try { body = pm.response.json(); } catch (e) { body = {}; }",
+                  "pm.test('Error code is OCR_TIMEOUT', function () {",
+                  "  pm.expect(body.error && body.error.code).to.eql('OCR_TIMEOUT');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API - License Scan (bad OCR URL)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "image",
+                  "type": "file"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrlApi}}/license/scan",
+              "host": [
+                "{{baseUrlApi}}"
+              ],
+              "path": [
+                "license",
+                "scan"
+              ]
+            },
+            "description": "Start API with OCR_WORKER_URL set to an invalid host. Expect 502 OCR_FAILED."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 502', function () {",
+                  "  pm.response.to.have.status(502);",
+                  "});",
+                  "var body = {};",
+                  "try { body = pm.response.json(); } catch (e) { body = {}; }",
+                  "pm.test('Error code is OCR_FAILED', function () {",
+                  "  pm.expect(body.error && body.error.code).to.eql('OCR_FAILED');",
+                  "});"
+                ]
+              }
+            }
+          ]
         }
       ]
     },

@@ -3,6 +3,7 @@ package com.dls.driverlicensescannerapi.controller;
 import com.dls.driverlicensescannerapi.dto.ErrorDetail;
 import com.dls.driverlicensescannerapi.dto.ErrorResponse;
 import com.dls.driverlicensescannerapi.error.ErrorCatalog;
+import com.dls.driverlicensescannerapi.ocr.OcrClientException;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.UUID;
@@ -73,6 +74,17 @@ public class ApiExceptionHandler {
                 ErrorCatalog.INVALID_IMAGE_CODE,
                 ErrorCatalog.MISSING_IMAGE_MESSAGE
         );
+    }
+
+    @ExceptionHandler(OcrClientException.class)
+    public ResponseEntity<ErrorResponse> handleOcrClientException(
+            OcrClientException ex,
+            HttpServletRequest request
+    ) {
+        HttpStatus status = ErrorCatalog.OCR_TIMEOUT_CODE.equals(ex.getCode())
+                ? HttpStatus.GATEWAY_TIMEOUT
+                : HttpStatus.BAD_GATEWAY;
+        return buildErrorResponse(request, status, ex.getCode(), ex.getMessage());
     }
 
     private ResponseEntity<ErrorResponse> buildErrorResponse(
