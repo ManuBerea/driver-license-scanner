@@ -5,10 +5,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
 
 public final class FileMultipartFile implements MultipartFile {
 
+    @Getter
     private final Path path;
     private final byte[] content;
     private final String filename;
@@ -59,10 +62,6 @@ public final class FileMultipartFile implements MultipartFile {
     @Override
     public void transferTo(java.io.File dest) throws IOException {
         Files.write(dest.toPath(), content);
-    }
-
-    public Path getPath() {
-        return path;
     }
 
     private static String detectContentType(String filename) {

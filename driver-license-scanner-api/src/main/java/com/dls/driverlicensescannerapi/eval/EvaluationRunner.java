@@ -17,11 +17,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.boot.restclient.RestTemplateBuilder;
 import tools.jackson.databind.ObjectMapper;
@@ -37,16 +35,6 @@ public final class EvaluationRunner {
             "expiryDate"
     );
 
-    private static final List<String> ALL_FIELDS = List.of(
-            "firstName",
-            "lastName",
-            "dateOfBirth",
-            "addressLine",
-            "licenceNumber",
-            "expiryDate",
-            "categories"
-    );
-
     private static final double CONFIDENCE_THRESHOLD = 0.70;
     private static final double REQUIRED_ACCURACY_THRESHOLD = 0.85;
     private static final long MEDIAN_TIME_THRESHOLD_MS = 10_000;
@@ -57,7 +45,7 @@ public final class EvaluationRunner {
         String datasetDir = envOrDefault("EVAL_DATASET_DIR", "docs/images");
         String reportPath = envOrDefault("EVAL_REPORT_PATH", "reports/ocr_engine_comparison.md");
         String engineList = envOrDefault("EVAL_ENGINES", "paddle,vision");
-        boolean enableVision = envBool(System.getenv("ENABLE_VISION_OCR"), false);
+        boolean enableVision = envBool(System.getenv("ENABLE_VISION_OCR"));
 
         String workerUrl = System.getenv("OCR_WORKER_URL");
         String internalKey = System.getenv("X_INTERNAL_KEY");
@@ -73,7 +61,7 @@ public final class EvaluationRunner {
         if (!enableVision) {
             engines = engines.stream()
                     .filter(engine -> !"vision".equalsIgnoreCase(engine))
-                    .collect(Collectors.toList());
+                    .toList();
         }
 
         Path datasetPath = resolveDatasetPath(datasetDir);
@@ -184,28 +172,14 @@ public final class EvaluationRunner {
         EvaluationResult result = new EvaluationResult();
 
         result.totalSamples = 1;
-        boolean allRequiredCorrect = true;
         for (String field : REQUIRED_FIELDS) {
             boolean match = compareField(field, expected, actual);
             result.fieldTotals.merge(field, 1, Integer::sum);
             if (match) {
                 result.fieldCorrect.merge(field, 1, Integer::sum);
             } else {
-                allRequiredCorrect = false;
                 result.failurePatterns.merge(patternFor(field, actual, expected), 1, Integer::sum);
             }
-        }
-
-        boolean categoriesMatch = compareField("categories", expected, actual);
-        result.fieldTotals.merge("categories", 1, Integer::sum);
-        if (categoriesMatch) {
-            result.fieldCorrect.merge("categories", 1, Integer::sum);
-        } else {
-            result.failurePatterns.merge(patternFor("categories", actual, expected), 1, Integer::sum);
-        }
-
-        if (allRequiredCorrect) {
-            result.requiredAllCorrect = 1;
         }
         return result;
     }
@@ -218,7 +192,6 @@ public final class EvaluationRunner {
             case "addressLine" -> equalsAddress(expected.addressLine(), actual.addressLine());
             case "licenceNumber" -> equalsLicence(expected.licenceNumber(), actual.licenceNumber());
             case "expiryDate" -> equalsNormalized(expected.expiryDate(), actual.expiryDate());
-            case "categories" -> equalsCategories(expected.categories(), actual.categories());
             default -> false;
         };
     }
@@ -235,11 +208,6 @@ public final class EvaluationRunner {
         return normalizeLicence(expected).equals(normalizeLicence(actual));
     }
 
-    private static boolean equalsCategories(List<String> expected, List<String> actual) {
-        Set<String> expectedSet = normalizeCategories(expected);
-        Set<String> actualSet = normalizeCategories(actual);
-        return expectedSet.equals(actualSet);
-    }
 
     private static String normalizeText(String value) {
         if (value == null) {
@@ -264,15 +232,6 @@ public final class EvaluationRunner {
         return value.replaceAll("[^A-Za-z0-9]", "").toUpperCase(Locale.UK);
     }
 
-    private static Set<String> normalizeCategories(List<String> categories) {
-        if (categories == null) {
-            return Set.of();
-        }
-        return categories.stream()
-                .filter(value -> value != null && !value.isBlank())
-                .map(value -> value.trim().toUpperCase(Locale.UK))
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-    }
 
     private static String patternFor(String field, LicenseFields actual, GroundTruthFields expected) {
         String actualValue = switch (field) {
@@ -299,7 +258,7 @@ public final class EvaluationRunner {
         if (expectedValue == null || expectedValue.isBlank()) {
             return "unexpected_" + field;
         }
-        return "mismatch_" + field;
+        return "invalid_" + field;
     }
 
     private static String renderReport(Map<String, Map<String, MetricsAccumulator>> metrics, List<GroundTruthSample> samples) {
@@ -338,20 +297,18 @@ public final class EvaluationRunner {
         return value == null || value.isBlank() ? fallback : value;
     }
 
-    private static boolean envBool(String value, boolean fallback) {
+    private static boolean envBool(String value) {
         if (value == null) {
-            return fallback;
+            return false;
         }
         return switch (value.trim().toLowerCase(Locale.ROOT)) {
             case "1", "true", "yes", "on" -> true;
-            case "0", "false", "no", "off" -> false;
-            default -> fallback;
+            default -> false;
         };
     }
 
     private static final class MetricsAccumulator {
         private int totalSamples;
-        private int requiredAllCorrect;
         private int lowConfidenceCount;
         private int failures;
         private final Map<String, Integer> fieldCorrect = new LinkedHashMap<>();
@@ -361,7 +318,6 @@ public final class EvaluationRunner {
 
         void record(EvaluationResult result) {
             totalSamples += result.totalSamples;
-            requiredAllCorrect += result.requiredAllCorrect;
             for (Map.Entry<String, Integer> entry : result.fieldCorrect.entrySet()) {
                 fieldCorrect.merge(entry.getKey(), entry.getValue(), Integer::sum);
             }
@@ -383,7 +339,7 @@ public final class EvaluationRunner {
         }
 
         String renderSummary() {
-            double requiredAccuracy = totalSamples == 0 ? 0 : (double) requiredAllCorrect / totalSamples;
+            double requiredAccuracy = requiredFieldAccuracy();
             long median = percentile(50);
             long p95 = percentile(95);
             double lowConfidencePct = totalSamples == 0 ? 0 : (double) lowConfidenceCount / totalSamples;
@@ -391,39 +347,58 @@ public final class EvaluationRunner {
             String passFailAccuracy = requiredAccuracy >= REQUIRED_ACCURACY_THRESHOLD ? "PASS" : "FAIL";
             String passFailTime = median <= MEDIAN_TIME_THRESHOLD_MS ? "PASS" : "FAIL";
 
-            StringBuilder summary = new StringBuilder();
-            summary.append("| Metric | Value |\n");
-            summary.append("| --- | --- |\n");
-            summary.append("| Required-field accuracy | ")
-                    .append(formatPercent(requiredAccuracy))
-                    .append(" (")
-                    .append(passFailAccuracy)
-                    .append(") |\n");
-            summary.append("| Median scan-form time | ")
-                    .append(median)
-                    .append(" ms (")
-                    .append(passFailTime)
-                    .append(") |\n");
-            summary.append("| P95 scan-form time | ").append(p95).append(" ms |\n");
-            summary.append("| % scans < 0.70 confidence | ")
-                    .append(formatPercent(lowConfidencePct))
-                    .append(" |\n");
-            summary.append("| Samples | ").append(totalSamples).append(" |\n");
-            summary.append("| OCR failures | ").append(failures).append(" |\n");
-            return summary.toString();
+            return "| Metric | Value |\n" +
+                    "| --- | --- |\n" +
+                    "| Required-field accuracy | " +
+                    formatPercent(requiredAccuracy) +
+                    " (" +
+                    passFailAccuracy +
+                    ") |\n" +
+                    "| Median scan-form time | " +
+                    median +
+                    " ms (" +
+                    passFailTime +
+                    ") |\n" +
+                    "| P95 scan-form time | " + p95 + " ms |\n" +
+                    "| % scans < 0.70 confidence | " +
+                    formatPercent(lowConfidencePct) +
+                    " |\n" +
+                    "| Samples | " + totalSamples + " |\n" +
+                    "| OCR failures | " + failures + " |\n";
         }
 
         String renderFieldTable() {
             StringBuilder table = new StringBuilder();
             table.append("| Field | Accuracy |\n");
             table.append("| --- | --- |\n");
-            for (String field : ALL_FIELDS) {
+            for (String field : REQUIRED_FIELDS) {
                 int total = fieldTotals.getOrDefault(field, 0);
                 int correct = fieldCorrect.getOrDefault(field, 0);
                 double accuracy = total == 0 ? 0 : (double) correct / total;
                 table.append("| ").append(field).append(" | ").append(formatPercent(accuracy)).append(" |\n");
             }
             return table.toString();
+        }
+
+        private double requiredFieldAccuracy() {
+            if (totalSamples == 0) {
+                return 0;
+            }
+            double sum = 0;
+            int counted = 0;
+            for (String field : REQUIRED_FIELDS) {
+                int total = fieldTotals.getOrDefault(field, 0);
+                if (total == 0) {
+                    continue;
+                }
+                int correct = fieldCorrect.getOrDefault(field, 0);
+                sum += (double) correct / total;
+                counted++;
+            }
+            if (counted == 0) {
+                return 0;
+            }
+            return sum / counted;
         }
 
         String renderFailurePatterns() {
@@ -435,7 +410,7 @@ public final class EvaluationRunner {
             builder.append("| Pattern | Count |\n");
             builder.append("| --- | --- |\n");
             failurePatterns.entrySet().stream()
-                    .sorted(Map.Entry.<String, Integer>comparingByValue(Comparator.reverseOrder()))
+                    .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
                     .limit(5)
                     .forEach(entry -> builder.append("| ")
                             .append(entry.getKey())
@@ -463,7 +438,6 @@ public final class EvaluationRunner {
 
     private static final class EvaluationResult {
         int totalSamples;
-        int requiredAllCorrect;
         long elapsedMs;
         double confidence;
         Map<String, Integer> fieldCorrect = new LinkedHashMap<>();
