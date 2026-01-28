@@ -13,6 +13,39 @@ import styles from "@/components/capture/CaptureScreen.module.css";
 
 type FlowStep = "capture" | "preview";
 
+type EditableFields = {
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
+  addressLine: string;
+  licenceNumber: string;
+  expiryDate: string;
+  categories: string;
+};
+
+const emptyEditableFields: EditableFields = {
+  firstName: "",
+  lastName: "",
+  dateOfBirth: "",
+  addressLine: "",
+  licenceNumber: "",
+  expiryDate: "",
+  categories: "",
+};
+
+const toEditableFields = (result: ScanResult | null): EditableFields => {
+  const fields = result?.fields;
+  return {
+    firstName: fields?.firstName ?? "",
+    lastName: fields?.lastName ?? "",
+    dateOfBirth: fields?.dateOfBirth ?? "",
+    addressLine: fields?.addressLine ?? "",
+    licenceNumber: fields?.licenceNumber ?? "",
+    expiryDate: fields?.expiryDate ?? "",
+    categories: fields?.categories?.join(", ") ?? "",
+  };
+};
+
 export default function CaptureScreen() {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -20,6 +53,7 @@ export default function CaptureScreen() {
   const [scanResult, setScanResult] = useState<ScanResult | null>(null);
   const [scanError, setScanError] = useState<string | null>(null);
   const [isScanning, setIsScanning] = useState(false);
+  const [editableFields, setEditableFields] = useState<EditableFields>(emptyEditableFields);
 
   const uploadInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -41,6 +75,7 @@ export default function CaptureScreen() {
     setScanResult(null);
     setScanError(null);
     setIsScanning(false);
+    setEditableFields(emptyEditableFields);
     setFlowStep("capture");
     stopCamera();
 
@@ -55,6 +90,7 @@ export default function CaptureScreen() {
     setScanResult(null);
     setScanError(null);
     setIsScanning(false);
+    setEditableFields(emptyEditableFields);
     setFlowStep("preview");
 
     if (isCameraActive) {
@@ -121,6 +157,7 @@ export default function CaptureScreen() {
     }
 
     setScanResult(response.data);
+    setEditableFields(toEditableFields(response.data));
     setIsScanning(false);
   };
 
@@ -201,6 +238,13 @@ export default function CaptureScreen() {
             isScanning={isScanning}
             scanError={scanError}
             scanResult={scanResult}
+            editableFields={editableFields}
+            onFieldChange={(field, value) => {
+              setEditableFields((prev) => ({
+                ...prev,
+                [field]: value,
+              }));
+            }}
           />
         )}
       </main>

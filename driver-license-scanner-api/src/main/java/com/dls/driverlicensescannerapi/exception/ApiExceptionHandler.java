@@ -1,4 +1,4 @@
-package com.dls.driverlicensescannerapi.controller;
+package com.dls.driverlicensescannerapi.exception;
 
 import com.dls.driverlicensescannerapi.dto.ErrorDetail;
 import com.dls.driverlicensescannerapi.dto.ErrorResponse;

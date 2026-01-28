@@ -79,6 +79,10 @@ public class OcrClient {
     }
 
     public OcrResult scan(MultipartFile image, String requestId) {
+        return scan(image, requestId, null);
+    }
+
+    public OcrResult scan(MultipartFile image, String requestId, String engine) {
         if (image == null || image.isEmpty()) {
             throw new OcrClientException(ErrorCatalog.INVALID_IMAGE_CODE, ErrorCatalog.MISSING_IMAGE_MESSAGE);
         }
@@ -109,6 +113,9 @@ public class OcrClient {
         headers.setAccept(List.of(MediaType.APPLICATION_JSON));
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         headers.set("X-INTERNAL-KEY", internalKey);
+        if (StringUtils.hasText(engine)) {
+            headers.set("X-OCR-ENGINE", engine);
+        }
         if (StringUtils.hasText(requestId)) {
             headers.set("X-Request-Id", requestId);
         }

@@ -15,6 +15,7 @@ Internal OCR service for the Driver License Scanner POC. This service runs OCR i
 - `ENABLE_VISION_OCR` = `false` (default)
 - `ENABLE_OCR_RAW_TEXT` = `false` (default)
 - `MAX_IMAGE_BYTES` = `10485760` (default: 10MB)
+- `GOOGLE_APPLICATION_CREDENTIALS` (required for Vision OCR; path to service account JSON)
 
 ## Python Version
 
@@ -38,6 +39,19 @@ pip install -r requirements-dev.txt
 pip install -r requirements.txt
 uvicorn main:application --host 0.0.0.0 --port 8000
 ```
+
+## Vision OCR Setup (optional)
+
+1) Enable Cloud Vision API in your Google Cloud project.  
+2) Create a service account key JSON and set:
+
+```bash
+
+export GOOGLE_APPLICATION_CREDENTIALS=/path/to/service-account.json
+export ENABLE_VISION_OCR=true
+```
+
+When `ENABLE_VISION_OCR=true`, the API can call the worker with `X-OCR-ENGINE: vision`.
 
 ## Tests
 

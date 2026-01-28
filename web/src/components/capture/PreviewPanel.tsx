@@ -14,6 +14,8 @@ type PreviewPanelProps = {
   isScanning: boolean;
   scanError: string | null;
   scanResult: ScanResult | null;
+  editableFields: EditableFields;
+  onFieldChange: (field: keyof EditableFields, value: string) => void;
 };
 
 type EditableFields = {
@@ -34,17 +36,10 @@ export function PreviewPanel({
   isScanning,
   scanError,
   scanResult,
+  editableFields,
+  onFieldChange,
 }: PreviewPanelProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [editableFields, setEditableFields] = useState<EditableFields>({
-    firstName: "",
-    lastName: "",
-    dateOfBirth: "",
-    addressLine: "",
-    licenceNumber: "",
-    expiryDate: "",
-    categories: "",
-  });
 
   useEffect(() => {
     const url = URL.createObjectURL(file);
@@ -59,19 +54,6 @@ export function PreviewPanel({
     () => `${file.name} (${formatBytes(file.size)})`,
     [file.name, file.size],
   );
-
-  useEffect(() => {
-    const fields = scanResult?.fields;
-    setEditableFields({
-      firstName: fields?.firstName ?? "",
-      lastName: fields?.lastName ?? "",
-      dateOfBirth: fields?.dateOfBirth ?? "",
-      addressLine: fields?.addressLine ?? "",
-      licenceNumber: fields?.licenceNumber ?? "",
-      expiryDate: fields?.expiryDate ?? "",
-      categories: fields?.categories?.join(", ") ?? "",
-    });
-  }, [scanResult]);
 
   useEffect(() => {
     const textareas = Array.from(
@@ -103,6 +85,26 @@ export function PreviewPanel({
     ],
     [],
   );
+
+  const fieldErrors = useMemo(() => {
+    const errors = new Map<string, string[]>();
+    const blockingErrors = scanResult?.validation?.blockingErrors ?? [];
+    blockingErrors.forEach((error) => {
+      if (!error?.field || !error.message) return;
+      const list = errors.get(error.field) ?? [];
+      list.push(error.message);
+      errors.set(error.field, list);
+    });
+    return errors;
+  }, [scanResult]);
+
+  const warnings = useMemo(() => {
+    return scanResult?.validation?.warnings ?? [];
+  }, [scanResult]);
+
+  const hasBlockingErrors = useMemo(() => {
+    return (scanResult?.validation?.blockingErrors ?? []).length > 0;
+  }, [scanResult]);
 
   const statusLabel = useMemo(() => {
     if (isScanning) return "Scanning";
@@ -158,10 +160,27 @@ export function PreviewPanel({
 
         <div className={styles.column}>
           <div className={styles.fieldsCard}>
-            <div className={styles.fieldsTitle}>Extracted fields</div>
+            <div className={styles.fieldsHeader}>
+              <div className={styles.fieldsTitle}>Extracted fields</div>
+              {scanResult?.selectedEngine && (
+                <span className={styles.engineBadge}>
+                  Engine: {scanResult.selectedEngine}
+                </span>
+              )}
+            </div>
             {shouldWarn && (
               <div className={styles.warningBanner}>
                 Low confidence - please review fields
+              </div>
+            )}
+            {warnings.length > 0 && (
+              <div className={styles.warningsBox}>
+                <div className={styles.warningsTitle}>Warnings</div>
+                <ul className={styles.warningsList}>
+                  {warnings.map((warning, index) => (
+                    <li key={`${warning}-${index}`}>{warning}</li>
+                  ))}
+                </ul>
               </div>
             )}
             <form className={styles.formGrid}>
@@ -177,6 +196,8 @@ export function PreviewPanel({
                 const value = editableFields[key];
                 const isRequired = requiredFields.includes(key);
                 const isMissing = isRequired && !value.trim();
+                const errors = fieldErrors.get(key) ?? [];
+                const hasError = errors.length > 0 || isMissing;
                 return (
                   <label key={key} className={styles.formField}>
                     <span className={styles.fieldLabel}>{label}</span>
@@ -184,10 +205,7 @@ export function PreviewPanel({
                       rows={1}
                       value={value}
                       onChange={(event) => {
-                        setEditableFields((prev) => ({
-                          ...prev,
-                          [key]: event.target.value,
-                        }));
+                        onFieldChange(key, event.target.value);
                       }}
                       onInput={(event) => {
                         const target = event.currentTarget;
@@ -195,9 +213,12 @@ export function PreviewPanel({
                         target.style.height = `${target.scrollHeight}px`;
                       }}
                       className={`${styles.fieldInput} ${
-                        isMissing ? styles.inputError : ""
+                        hasError ? styles.inputError : ""
                       }`}
                     />
+                    {errors.length > 0 && (
+                      <span className={styles.fieldErrorText}>{errors[0]}</span>
+                    )}
                   </label>
                 );
               })}
@@ -228,6 +249,13 @@ export function PreviewPanel({
           onClick={onRetake}
         >
           Retake
+        </button>
+        <button
+          type="button"
+          className={styles.primaryButton}
+          disabled={!scanResult || isScanning || hasBlockingErrors}
+        >
+          Save
         </button>
         <button
           type="button"
