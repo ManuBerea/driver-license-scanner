@@ -160,7 +160,14 @@ export function PreviewPanel({
 
         <div className={styles.column}>
           <div className={styles.fieldsCard}>
-            <div className={styles.fieldsTitle}>Extracted fields</div>
+            <div className={styles.fieldsHeader}>
+              <div className={styles.fieldsTitle}>Extracted fields</div>
+              {scanResult?.selectedEngine && (
+                <span className={styles.engineBadge}>
+                  Engine: {scanResult.selectedEngine}
+                </span>
+              )}
+            </div>
             {shouldWarn && (
               <div className={styles.warningBanner}>
                 Low confidence - please review fields

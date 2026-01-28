@@ -3,7 +3,7 @@ import time
 
 from core.models import OcrLineResponse, OcrResponse
 from core.settings import env_bool, get_engine, max_image_bytes
-from ocr_engines import OcrLine
+from ocr_engines import OcrLine, resolve_engine
 from services.image_loader import load_image
 
 
@@ -14,11 +14,15 @@ def compute_confidence(lines: list[OcrLine]) -> float:
     return total / len(lines)
 
 
-def run_ocr(request_id: str, image_bytes: bytes) -> OcrResponse:
+def run_ocr(request_id: str, image_bytes: bytes, engine_override: str | None = None) -> OcrResponse:
     image = load_image(image_bytes, max_image_bytes())
     enable_raw_text = env_bool(os.getenv("ENABLE_OCR_RAW_TEXT"), False)
 
-    engine = get_engine()
+    if engine_override:
+        enable_vision = env_bool(os.getenv("ENABLE_VISION_OCR"), False)
+        engine = resolve_engine(engine_override, enable_vision)
+    else:
+        engine = get_engine()
     start = time.perf_counter()
     lines = engine.run(image)
     elapsed_ms = int((time.perf_counter() - start) * 1000)

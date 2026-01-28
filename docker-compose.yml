@@ -19,7 +19,7 @@ services:
       SPRING_PROFILES_ACTIVE: local
       OCR_WORKER_URL: http://ocr-worker:8000
       X_INTERNAL_KEY: dev-internal-key
-      ENABLE_FALLBACK_OCR: "false"
+      ENABLE_FALLBACK_OCR: "true"
       OCR_CONFIDENCE_WARN_THRESHOLD: "0.70"
     depends_on:
       ocr-worker:
@@ -32,9 +32,11 @@ services:
     environment:
       X_INTERNAL_KEY: dev-internal-key
       OCR_ENGINE: paddle
-    command: ["uvicorn", "main:application", "--host", "0.0.0.0", "--port", "8000"]
+      ENABLE_VISION_OCR: "true"
+      GOOGLE_APPLICATION_CREDENTIALS: /run/secrets/gcp-vision-key.json
     volumes:
       - paddleocr-cache:/root/.paddleocr
+      - ${GOOGLE_APPLICATION_CREDENTIALS_PATH}:/run/secrets/gcp-vision-key.json:ro
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health').read()"]
       interval: 10s

@@ -48,6 +48,7 @@ def create_app() -> FastAPI:
     async def ocr(
         image: bytes | None = File(default=None),
         x_internal_key: str | None = Header(default=None, alias="X-INTERNAL-KEY"),
+        x_ocr_engine: str | None = Header(default=None, alias="X-OCR-ENGINE"),
     ) -> JSONResponse | OcrResponse:
         request_id = str(uuid4())
         expected_key = os.getenv("X_INTERNAL_KEY")
@@ -60,7 +61,7 @@ def create_app() -> FastAPI:
             )
 
         try:
-            response = run_ocr(request_id, image or b"")
+            response = run_ocr(request_id, image or b"", x_ocr_engine)
         except ImageValidationError as exc:
             return error_response(request_id, exc.code, exc.message, exc.status_code)
         except OcrEngineError as exc:
