@@ -95,8 +95,25 @@ public final class LicenseFieldParser {
         if (range.isEmpty()) {
             return null;
         }
-        String combined = normalize(String.join("", range));
-        String cleaned = combined.replaceAll("[^A-Za-z0-9]", "").toUpperCase(Locale.ROOT);
+        String best = null;
+        for (String line : range) {
+            if (line == null || line.isBlank()) {
+                continue;
+            }
+            String[] tokens = line.split("[^A-Za-z0-9]+");
+            for (String token : tokens) {
+                if (token.isBlank()) {
+                    continue;
+                }
+                if (best == null || token.length() > best.length()) {
+                    best = token;
+                }
+            }
+        }
+        if (best == null) {
+            return null;
+        }
+        String cleaned = best.replaceAll("[^A-Za-z0-9]", "").toUpperCase(Locale.ROOT);
         return nullIfBlank(cleaned);
     }
     private static String extractLabelText(LabelIndex labelIndex, String label, List<String> lines) {

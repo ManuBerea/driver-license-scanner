@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 
 final class AddressAssembler {
     private static final Pattern POSTCODE_COMPACT_PATTERN =
-            Pattern.compile("^[A-Z]{1,2}\\d[A-Z\\d]?\\d[A-Z]{2}$", Pattern.CASE_INSENSITIVE);
+            Pattern.compile("^[A-Z]{1,2}\\d[A-Z\\d]{0,2}\\d[A-Z]{2}$", Pattern.CASE_INSENSITIVE);
     private static final Pattern MONTH_STAMP_PATTERN =
             Pattern.compile("^(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|SEPT|OCT|NOV|DEC)\\s?\\d{2}$",
                     Pattern.CASE_INSENSITIVE);
@@ -43,13 +43,13 @@ final class AddressAssembler {
         String cleaned = token.replaceAll("\\s+", " ").trim();
         cleaned = cleaned.replaceAll(",\\s*", ", ");
         cleaned = cleaned.replaceAll("\\.(?=\\S)", ". ");
-        cleaned = cleaned.replaceAll("(?<=\\d)(?=[A-Z])", " ");
-        cleaned = cleaned.replaceAll("(?<=[A-Z])(?=\\d)", " ");
-        cleaned = splitSuffix(cleaned);
-        String compact = cleaned.replaceAll("\\s+", "").toUpperCase(Locale.ROOT);
+        String compact = cleaned.replaceAll("[^A-Za-z0-9]", "").toUpperCase(Locale.ROOT);
         if (POSTCODE_COMPACT_PATTERN.matcher(compact).matches()) {
             return formatPostcode(compact);
         }
+        cleaned = cleaned.replaceAll("(?<=\\d)(?=[A-Z])", " ");
+        cleaned = cleaned.replaceAll("(?<=[A-Z])(?=\\d)", " ");
+        cleaned = splitSuffix(cleaned);
         return cleaned;
     }
 
