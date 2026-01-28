@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { UK_LICENSE_ASPECT_RATIO, formatBytes } from "@/lib/imageUtils";
-import type { ScanResult } from "@/types/scan";
+import type { ScanResult, ScanValidation } from "@/types/scan";
 import styles from "@/components/capture/PreviewPanel.module.css";
 
 type PreviewPanelProps = {
@@ -14,6 +14,7 @@ type PreviewPanelProps = {
   isScanning: boolean;
   scanError: string | null;
   scanResult: ScanResult | null;
+  validationResult: ScanValidation | null;
   editableFields: EditableFields;
   onFieldChange: (field: keyof EditableFields, value: string) => void;
 };
@@ -28,6 +29,15 @@ type EditableFields = {
   categories: string;
 };
 
+const REQUIRED_FIELDS: Array<keyof EditableFields> = [
+  "firstName",
+  "lastName",
+  "dateOfBirth",
+  "addressLine",
+  "licenceNumber",
+  "expiryDate",
+];
+
 export function PreviewPanel({
   file,
   onChooseAnother,
@@ -36,6 +46,7 @@ export function PreviewPanel({
   isScanning,
   scanError,
   scanResult,
+  validationResult,
   editableFields,
   onFieldChange,
 }: PreviewPanelProps) {
@@ -74,21 +85,9 @@ export function PreviewPanel({
     scanResult?.ocrConfidence !== undefined &&
     scanResult.ocrConfidence < confidenceThreshold;
 
-  const requiredFields = useMemo(
-    () => [
-      "firstName",
-      "lastName",
-      "dateOfBirth",
-      "addressLine",
-      "licenceNumber",
-      "expiryDate",
-    ],
-    [],
-  );
-
   const fieldErrors = useMemo(() => {
     const errors = new Map<string, string[]>();
-    const blockingErrors = scanResult?.validation?.blockingErrors ?? [];
+    const blockingErrors = scanResult ? validationResult?.blockingErrors ?? [] : [];
     blockingErrors.forEach((error) => {
       if (!error?.field || !error.message) return;
       const list = errors.get(error.field) ?? [];
@@ -96,15 +95,15 @@ export function PreviewPanel({
       errors.set(error.field, list);
     });
     return errors;
-  }, [scanResult]);
+  }, [scanResult, validationResult]);
 
   const warnings = useMemo(() => {
-    return scanResult?.validation?.warnings ?? [];
-  }, [scanResult]);
+    return validationResult?.warnings ?? [];
+  }, [validationResult]);
 
   const hasBlockingErrors = useMemo(() => {
-    return (scanResult?.validation?.blockingErrors ?? []).length > 0;
-  }, [scanResult]);
+    return scanResult ? (validationResult?.blockingErrors ?? []).length > 0 : false;
+  }, [scanResult, validationResult]);
 
   const statusLabel = useMemo(() => {
     if (isScanning) return "Scanning";
@@ -187,7 +186,7 @@ export function PreviewPanel({
                 ["categories", "License categories"],
               ] as const).map(([key, label]) => {
                 const value = editableFields[key];
-                const isRequired = requiredFields.includes(key);
+                const isRequired = REQUIRED_FIELDS.includes(key);
                 const isMissing = isRequired && !value.trim();
                 const errors = fieldErrors.get(key) ?? [];
                 const hasError = errors.length > 0 || isMissing;

@@ -2,9 +2,12 @@ package com.dls.driverlicensescannerapi.controller;
 
 import com.dls.driverlicensescannerapi.dto.ErrorDetail;
 import com.dls.driverlicensescannerapi.dto.ErrorResponse;
+import com.dls.driverlicensescannerapi.dto.LicenseFields;
 import com.dls.driverlicensescannerapi.dto.ScanResponse;
+import com.dls.driverlicensescannerapi.dto.ValidationResult;
 import com.dls.driverlicensescannerapi.error.ErrorCatalog;
 import com.dls.driverlicensescannerapi.service.ScanService;
+import com.dls.driverlicensescannerapi.validator.ValidationService;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -17,6 +20,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,9 +36,11 @@ public class ScanController {
             Set.of(".jpg", ".jpeg", ".png", ".webp");
 
     private final ScanService scanService;
+    private final ValidationService validationService;
 
-    public ScanController(ScanService scanService) {
+    public ScanController(ScanService scanService, ValidationService validationService) {
         this.scanService = scanService;
+        this.validationService = validationService;
     }
 
     @PostMapping(
@@ -65,6 +71,20 @@ public class ScanController {
         return ResponseEntity.ok()
                 .headers(noStoreHeaders())
                 .body(response);
+    }
+
+    @PostMapping(
+            path = "/validate",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<ValidationResult> validate(
+            @RequestBody(required = false) LicenseFields fields
+    ) {
+        ValidationResult result = validationService.validate(fields);
+        return ResponseEntity.ok()
+                .headers(noStoreHeaders())
+                .body(result);
     }
 
     private boolean hasAllowedFormat(MultipartFile image) {

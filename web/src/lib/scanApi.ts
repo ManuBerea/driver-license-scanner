@@ -1,4 +1,4 @@
-import type { ScanErrorPayload, ScanResult } from "@/types/scan";
+import type { ScanErrorPayload, ScanFields, ScanResult, ScanValidation } from "@/types/scan";
 
 const API_BASE_URL = (
   process.env.NEXT_PUBLIC_API_BASE_URL?.trim() || "http://localhost:8080"
@@ -6,6 +6,10 @@ const API_BASE_URL = (
 
 type ScanResponse =
   | { ok: true; data: ScanResult }
+  | { ok: false; message: string };
+
+type ValidationResponse =
+  | { ok: true; data: ScanValidation }
   | { ok: false; message: string };
 
 export async function scanLicense(image: File): Promise<ScanResponse> {
@@ -34,5 +38,34 @@ export async function scanLicense(image: File): Promise<ScanResponse> {
     return { ok: true, data: payload as ScanResult };
   } catch {
     return { ok: false, message: "Scan failed. Please try again." };
+  }
+}
+
+export async function validateLicenseFields(fields: ScanFields): Promise<ValidationResponse> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/license/validate`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(fields),
+    });
+
+    const payload = (await response.json().catch(() => null)) as
+      | ScanValidation
+      | ScanErrorPayload
+      | null;
+
+    if (!response.ok) {
+      const message =
+        payload && "error" in payload && payload.error?.message
+          ? payload.error.message
+          : "Validation failed. Please try again.";
+      return { ok: false, message };
+    }
+
+    return { ok: true, data: payload as ScanValidation };
+  } catch {
+    return { ok: false, message: "Validation failed. Please try again." };
   }
 }
