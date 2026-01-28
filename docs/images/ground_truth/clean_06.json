@@ -1,0 +1,16 @@
+{
+  "image": "clean/clean_06.png",
+  "fields": {
+    "firstName": "ROWAN",
+    "lastName": "HARRIS",
+    "dateOfBirth": "19.02.2004",
+    "expiryDate": "21.10.2033",
+    "licenceNumber": "HARRI040219V371BZSA89",
+    "addressLine": "190 STATION ROAD, SHEFFIELD, TYNE AND WEAR, W97B 4OO",
+    "categories": [
+      "B1",
+      "B",
+      "C1E"
+    ]
+  }
+}

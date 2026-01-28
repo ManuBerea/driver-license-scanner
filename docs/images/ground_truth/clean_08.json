@@ -1,0 +1,17 @@
+{
+  "image": "clean/clean_08.png",
+  "fields": {
+    "firstName": "DREW RILEY",
+    "lastName": "MILLER",
+    "dateOfBirth": "02.11.2001",
+    "expiryDate": "20.02.2027",
+    "licenceNumber": "MILLE011102YCWHE4F197",
+    "addressLine": "123 LONDON ROAD, LEEDS, NW93 0VY",
+    "categories": [
+      "B",
+      "BE",
+      "D1E",
+      "D"
+    ]
+  }
+}

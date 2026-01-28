@@ -1,0 +1,16 @@
+{
+  "image": "clean/clean_07.png",
+  "fields": {
+    "firstName": "DREW ALEX",
+    "lastName": "PARKER",
+    "dateOfBirth": "27.01.1989",
+    "expiryDate": "13.03.2029",
+    "licenceNumber": "PARKE890127QK6G5OSC60",
+    "addressLine": "157 PARK AVENUE, MANCHESTER, NORFOLK, LS14E 9QC",
+    "categories": [
+      "B",
+      "D1",
+      "g"
+    ]
+  }
+}

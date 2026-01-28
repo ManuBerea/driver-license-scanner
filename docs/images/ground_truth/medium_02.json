@@ -1,0 +1,17 @@
+{
+  "image": "medium/medium_02.png",
+  "fields": {
+    "firstName": "TAYLOR REESE",
+    "lastName": "MARTIN",
+    "dateOfBirth": "13.07.1983",
+    "expiryDate": "12.02.2033",
+    "licenceNumber": "MARTI83071315RZI5ID90",
+    "addressLine": "150 STATION ROAD, HULL, NORFOLK, B34E 0LH",
+    "categories": [
+      "A1",
+      "B",
+      "k",
+      "l"
+    ]
+  }
+}

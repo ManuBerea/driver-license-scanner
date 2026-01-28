@@ -1,0 +1,15 @@
+{
+  "image": "clean/clean_04.png",
+  "fields": {
+    "firstName": "RILEY",
+    "lastName": "WATSON",
+    "dateOfBirth": "15.06.1962",
+    "expiryDate": "23.03.2027",
+    "licenceNumber": "WATSO6206157Z97ZQ5166",
+    "addressLine": "122 MAIN STREET, LIVERPOOL, LINCOLNSHIRE, BS53 0NE",
+    "categories": [
+      "B1",
+      "B"
+    ]
+  }
+}

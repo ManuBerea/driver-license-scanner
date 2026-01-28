@@ -1,0 +1,19 @@
+{
+  "image": "clean/clean_02.png",
+  "fields": {
+    "firstName": "DREW",
+    "lastName": "PARKER",
+    "dateOfBirth": "13.11.1993",
+    "expiryDate": "04.07.2031",
+    "licenceNumber": "PARKE9311132XZ36JWB71",
+    "addressLine": "143 BRIDGE STREET, OXFORD, EH13 8XQ",
+    "categories": [
+      "A",
+      "B1",
+      "B",
+      "BE",
+      "C",
+      "D1"
+    ]
+  }
+}
