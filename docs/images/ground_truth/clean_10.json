@@ -1,0 +1,18 @@
+{
+  "image": "clean/clean_10.png",
+  "fields": {
+    "firstName": "JORDAN RILEY",
+    "lastName": "BROWN",
+    "dateOfBirth": "19.10.1974",
+    "expiryDate": "27.11.2035",
+    "licenceNumber": "BROWN74101996352LX111",
+    "addressLine": "142 THE GREEN, PLYMOUTH, NW76 3KY",
+    "categories": [
+      "A1",
+      "B",
+      "C1",
+      "C1E",
+      "l"
+    ]
+  }
+}

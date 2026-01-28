@@ -1,0 +1,16 @@
+{
+  "image": "medium/medium_07.png",
+  "fields": {
+    "firstName": "JORDAN TAYLOR",
+    "lastName": "BROWN",
+    "dateOfBirth": "28.03.1957",
+    "expiryDate": "14.04.2031",
+    "licenceNumber": "BROWN570328W5T5RXC917",
+    "addressLine": "102 STATION ROAD, CAMBRIDGE, SE17H 9QO",
+    "categories": [
+      "A",
+      "B",
+      "DE"
+    ]
+  }
+}

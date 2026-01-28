@@ -9,10 +9,10 @@ import java.util.regex.Pattern;
 
 final class LabelIndex {
     private static final Pattern LABEL_PATTERN =
-            Pattern.compile("^(?<label>(?:1|2|3|4a|4b|5|7|8|9))(?=\\s|[\\.)]|$)\\s*[\\.)]?\\s*(?<value>.*)$",
+            Pattern.compile("^(?<label>(?:1|2|3|4a|4b|5|7|8|9))(?=[\\.)])\\s*[\\.)]\\s*(?<value>.*)$",
                     Pattern.CASE_INSENSITIVE);
     private static final Pattern INLINE_LABEL_PATTERN =
-            Pattern.compile("(?<![A-Z0-9])(?<label>(?:1|2|3|4a|4b|5|7|8|9))(?=\\s|[\\.)]|$)",
+            Pattern.compile("(?<![A-Z0-9])(?<label>(?:1|2|3|4a|4b|5|7|8|9))(?=[\\.)])\\s*[\\.)]\\s*",
                     Pattern.CASE_INSENSITIVE);
 
     private final List<LabelMatch> matches;
@@ -34,8 +34,7 @@ final class LabelIndex {
                     Matcher inline = INLINE_LABEL_PATTERN.matcher(line);
                     if (inline.find()) {
                         String label = inline.group("label").toLowerCase(Locale.ROOT);
-                        String value = lineNormalize(line.substring(inline.end())
-                                .replaceFirst("^[\\.)\\s]+", ""));
+                        String value = lineNormalize(line.substring(inline.end()));
                         matches.add(new LabelMatch(label, value, i));
                     }
                 }

@@ -43,3 +43,10 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+tasks.register('runEvaluation', JavaExec) {
+    group = 'verification'
+    description = 'Run OCR evaluation harness and generate markdown report.'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.dls.driverlicensescannerapi.eval.EvaluationRunner'
+}
