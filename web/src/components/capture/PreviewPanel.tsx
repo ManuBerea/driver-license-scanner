@@ -86,25 +86,87 @@ export function PreviewPanel({
     [],
   );
 
+  const clientBlockingErrors = useMemo(() => {
+    const errors: { field: string; message: string }[] = [];
+    const trimmed = {
+      firstName: editableFields.firstName.trim(),
+      lastName: editableFields.lastName.trim(),
+      dateOfBirth: editableFields.dateOfBirth.trim(),
+      addressLine: editableFields.addressLine.trim(),
+      licenceNumber: editableFields.licenceNumber.trim(),
+      expiryDate: editableFields.expiryDate.trim(),
+    };
+
+    requiredFields.forEach((field) => {
+      if (!trimmed[field as keyof typeof trimmed]) {
+        errors.push({
+          field,
+          message: `Missing required field: ${field}`,
+        });
+      }
+    });
+
+    const postcodePattern = /\b[A-Z]{1,2}\d[A-Z\d]?\s?\d[A-Z]{2}\b/i;
+    if (trimmed.addressLine && !postcodePattern.test(trimmed.addressLine)) {
+      errors.push({
+        field: "addressLine",
+        message: "Invalid UK postcode in addressLine.",
+      });
+    }
+
+    const licencePattern = /^[A-Z]{5}\d{6}[A-Z]{2}\d[A-Z]{2}\d{0,2}$/;
+    if (trimmed.licenceNumber) {
+      const normalized = trimmed.licenceNumber.replace(/\s+/g, "").toUpperCase();
+      if (!licencePattern.test(normalized)) {
+        errors.push({
+          field: "licenceNumber",
+          message: "Invalid licence number.",
+        });
+      }
+    }
+
+    if (trimmed.expiryDate) {
+      const parts = trimmed.expiryDate.split(".");
+      if (parts.length === 3) {
+        const [dd, mm, yyyy] = parts.map((part) => Number(part));
+        if (
+          Number.isInteger(dd) &&
+          Number.isInteger(mm) &&
+          Number.isInteger(yyyy)
+        ) {
+          const expiry = new Date(yyyy, mm - 1, dd);
+          if (!Number.isNaN(expiry.getTime())) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            if (expiry < today) {
+              errors.push({
+                field: "expiryDate",
+                message: "Expiry date is in the past.",
+              });
+            }
+          }
+        }
+      }
+    }
+
+    return errors;
+  }, [editableFields, requiredFields]);
+
   const fieldErrors = useMemo(() => {
     const errors = new Map<string, string[]>();
-    const blockingErrors = scanResult?.validation?.blockingErrors ?? [];
-    blockingErrors.forEach((error) => {
-      if (!error?.field || !error.message) return;
+    clientBlockingErrors.forEach((error) => {
       const list = errors.get(error.field) ?? [];
       list.push(error.message);
       errors.set(error.field, list);
     });
     return errors;
-  }, [scanResult]);
+  }, [clientBlockingErrors]);
 
   const warnings = useMemo(() => {
     return scanResult?.validation?.warnings ?? [];
   }, [scanResult]);
 
-  const hasBlockingErrors = useMemo(() => {
-    return (scanResult?.validation?.blockingErrors ?? []).length > 0;
-  }, [scanResult]);
+  const hasBlockingErrors = clientBlockingErrors.length > 0;
 
   const statusLabel = useMemo(() => {
     if (isScanning) return "Scanning";

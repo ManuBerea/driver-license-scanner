@@ -43,6 +43,8 @@ final class AddressAssembler {
         String cleaned = token.replaceAll("\\s+", " ").trim();
         cleaned = cleaned.replaceAll(",\\s*", ", ");
         cleaned = cleaned.replaceAll("\\.(?=\\S)", ". ");
+        cleaned = cleaned.replaceAll("^,+\\s*", "");
+        cleaned = cleaned.replaceAll("\\s*,+$", "");
         String compact = cleaned.replaceAll("[^A-Za-z0-9]", "").toUpperCase(Locale.ROOT);
         if (POSTCODE_COMPACT_PATTERN.matcher(compact).matches()) {
             return formatPostcode(compact);
