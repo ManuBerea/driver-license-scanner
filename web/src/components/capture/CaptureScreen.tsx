@@ -1,14 +1,14 @@
 "use client";
 
-import { useRef, useState, type ChangeEvent } from "react";
+import { useEffect, useRef, useState, type ChangeEvent } from "react";
 
 import { CameraPanel } from "@/components/capture/CameraPanel";
 import { PreviewPanel } from "@/components/capture/PreviewPanel";
 import { UploadPanel } from "@/components/capture/UploadPanel";
 import { useCameraCapture } from "@/hooks/useCameraCapture";
-import { scanLicense } from "@/lib/scanApi";
+import { scanLicense, validateLicenseFields } from "@/lib/scanApi";
 import { validateImageFile } from "@/lib/imageUtils";
-import type { ScanResult } from "@/types/scan";
+import type { ScanFields, ScanResult, ScanValidation } from "@/types/scan";
 import styles from "@/components/capture/CaptureScreen.module.css";
 
 type FlowStep = "capture" | "preview";
@@ -46,6 +46,19 @@ const toEditableFields = (result: ScanResult | null): EditableFields => {
   };
 };
 
+const toScanFields = (fields: EditableFields): ScanFields => ({
+  firstName: fields.firstName?.trim() || null,
+  lastName: fields.lastName?.trim() || null,
+  dateOfBirth: fields.dateOfBirth?.trim() || null,
+  addressLine: fields.addressLine?.trim() || null,
+  licenceNumber: fields.licenceNumber?.trim() || null,
+  expiryDate: fields.expiryDate?.trim() || null,
+  categories: fields.categories
+    .split(",")
+    .map((category) => category.trim())
+    .filter((category) => category.length > 0),
+});
+
 export default function CaptureScreen() {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -54,6 +67,8 @@ export default function CaptureScreen() {
   const [scanError, setScanError] = useState<string | null>(null);
   const [isScanning, setIsScanning] = useState(false);
   const [editableFields, setEditableFields] = useState<EditableFields>(emptyEditableFields);
+  const [validationResult, setValidationResult] = useState<ScanValidation | null>(null);
+  const validationRequestRef = useRef(0);
 
   const uploadInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -76,6 +91,7 @@ export default function CaptureScreen() {
     setScanError(null);
     setIsScanning(false);
     setEditableFields(emptyEditableFields);
+    setValidationResult(null);
     setFlowStep("capture");
     stopCamera();
 
@@ -91,6 +107,7 @@ export default function CaptureScreen() {
     setScanError(null);
     setIsScanning(false);
     setEditableFields(emptyEditableFields);
+    setValidationResult(null);
     setFlowStep("preview");
 
     if (isCameraActive) {
@@ -157,6 +174,7 @@ export default function CaptureScreen() {
     }
 
     setScanResult(response.data);
+    setValidationResult(response.data.validation ?? null);
     setEditableFields(toEditableFields(response.data));
     setIsScanning(false);
   };
@@ -189,6 +207,25 @@ export default function CaptureScreen() {
 
   const stepLabel =
     flowStep === "capture" ? "Step 1 of 2 - Capture" : "Step 2 of 2 - Preview";
+
+  useEffect(() => {
+    if (!scanResult) {
+      setValidationResult(null);
+      return;
+    }
+    const requestId = validationRequestRef.current + 1;
+    validationRequestRef.current = requestId;
+    const timeout = window.setTimeout(async () => {
+      const response = await validateLicenseFields(toScanFields(editableFields));
+      if (!response.ok) return;
+      if (validationRequestRef.current !== requestId) return;
+      setValidationResult(response.data);
+    }, 350);
+
+    return () => {
+      window.clearTimeout(timeout);
+    };
+  }, [editableFields, scanResult]);
 
   return (
     <div className={styles.page}>
@@ -238,6 +275,7 @@ export default function CaptureScreen() {
             isScanning={isScanning}
             scanError={scanError}
             scanResult={scanResult}
+            validationResult={validationResult}
             editableFields={editableFields}
             onFieldChange={(field, value) => {
               setEditableFields((prev) => ({
