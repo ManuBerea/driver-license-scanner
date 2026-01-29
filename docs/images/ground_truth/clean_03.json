@@ -1,0 +1,17 @@
+{
+  "image": "clean/clean_03.png",
+  "fields": {
+    "firstName": "JORDAN",
+    "lastName": "MARTIN",
+    "dateOfBirth": "07.09.1980",
+    "expiryDate": "21.07.2033",
+    "licenceNumber": "MARTI800907FH01XWMU54",
+    "addressLine": "199 VICTORIA ROAD, CARDIFF, CB26 3CI",
+    "categories": [
+      "B1",
+      "B",
+      "DE",
+      "l"
+    ]
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "image": "clean/clean_01.png",
+  "fields": {
+    "firstName": "SAM CASEY",
+    "lastName": "BAKER",
+    "dateOfBirth": "05.04.1965",
+    "expiryDate": "24.11.2027",
+    "licenceNumber": "BAKER6504059M80O2RA30",
+    "addressLine": "56 MAIN STREET, NEWCASTLE, OX12J 0AC",
+    "categories": [
+      "A2",
+      "A",
+      "B"
+    ]
+  }
+}

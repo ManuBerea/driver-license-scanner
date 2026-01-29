@@ -1,0 +1,17 @@
+{
+  "image": "medium/medium_05.png",
+  "fields": {
+    "firstName": "ROWAN",
+    "lastName": "EDWARDS",
+    "dateOfBirth": "14.05.1952",
+    "expiryDate": "02.01.2030",
+    "licenceNumber": "EDWAR520514XXN53O9W93",
+    "addressLine": "112 STATION ROAD, OXFORD, BS2 6JR",
+    "categories": [
+      "AM",
+      "A",
+      "B1",
+      "B"
+    ]
+  }
+}

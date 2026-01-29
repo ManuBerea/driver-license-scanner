@@ -1,0 +1,17 @@
+{
+  "image": "medium/medium_04.png",
+  "fields": {
+    "firstName": "ELLIS TAYLOR",
+    "lastName": "BAKER",
+    "dateOfBirth": "09.04.2002",
+    "expiryDate": "06.08.2035",
+    "licenceNumber": "BAKER020409TOST5X8W80",
+    "addressLine": "193 HIGH STREET, OXFORD, LINCOLNSHIRE, SA56J 0CA",
+    "categories": [
+      "A2",
+      "B",
+      "f",
+      "g"
+    ]
+  }
+}

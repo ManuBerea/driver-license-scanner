@@ -18,6 +18,7 @@ import org.springframework.mock.web.MockMultipartFile;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -100,8 +101,8 @@ class ScanServiceTest {
                 null
         );
 
-        when(ocrClient.scan(any(), any(), "paddle")).thenReturn(firstAttempt);
-        when(ocrClient.scan(any(), any(), "vision")).thenReturn(secondAttempt);
+        when(ocrClient.scan(any(), any(), eq("paddle"))).thenReturn(firstAttempt);
+        when(ocrClient.scan(any(), any(), eq("vision"))).thenReturn(secondAttempt);
 
         MockMultipartFile image = new MockMultipartFile(
                 "image",
@@ -114,7 +115,7 @@ class ScanServiceTest {
 
         assertEquals("vision", response.selectedEngine());
         assertEquals(List.of("paddle", "vision"), response.attemptedEngines());
-        verify(ocrClient, times(1)).scan(any(), any(), "paddle");
-        verify(ocrClient, times(1)).scan(any(), any(), "vision");
+        verify(ocrClient, times(1)).scan(any(), any(), eq("paddle"));
+        verify(ocrClient, times(1)).scan(any(), any(), eq("vision"));
     }
 }

@@ -1,0 +1,15 @@
+{
+  "image": "clean/clean_05.png",
+  "fields": {
+    "firstName": "SAM CHARLIE",
+    "lastName": "BROWN",
+    "dateOfBirth": "22.04.1954",
+    "expiryDate": "11.07.2032",
+    "licenceNumber": "BROWN540422CHVW48AK76",
+    "addressLine": "169 BRIDGE STREET, SHEFFIELD, PL58 4AF",
+    "categories": [
+      "B",
+      "h"
+    ]
+  }
+}

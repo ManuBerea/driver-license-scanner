@@ -33,13 +33,33 @@ const emptyEditableFields: EditableFields = {
   categories: "",
 };
 
+const extractCompactPostcode = (value: string) => {
+  const tokens = value.split(/[,\\s]+/).filter(Boolean);
+  const pattern = /^(?:[A-Z]\d{1,2}[A-Z]?|[A-Z]{2}\d{1,2}[A-Z]?)(?:\d[A-Z]{2})$/i;
+  for (let i = Math.max(0, tokens.length - 4); i < tokens.length; i += 1) {
+    const compact = tokens.slice(i).join("").replace(/[^A-Za-z0-9]/g, "");
+    if (pattern.test(compact)) {
+      return compact.toUpperCase();
+    }
+  }
+  return null;
+};
+
+const compactPostcode = (value: string) => {
+  const compact = extractCompactPostcode(value);
+  if (!compact) return value;
+  const spacedPattern = compact.split("").join("[^A-Za-z0-9]*");
+  const matcher = new RegExp(`\\b${spacedPattern}\\b`, "i");
+  return value.replace(matcher, compact);
+};
+
 const toEditableFields = (result: ScanResult | null): EditableFields => {
   const fields = result?.fields;
   return {
     firstName: fields?.firstName ?? "",
     lastName: fields?.lastName ?? "",
     dateOfBirth: fields?.dateOfBirth ?? "",
-    addressLine: fields?.addressLine ?? "",
+    addressLine: compactPostcode(fields?.addressLine ?? ""),
     licenceNumber: fields?.licenceNumber ?? "",
     expiryDate: fields?.expiryDate ?? "",
     categories: fields?.categories?.join(", ") ?? "",

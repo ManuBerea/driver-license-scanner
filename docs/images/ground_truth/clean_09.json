@@ -1,0 +1,18 @@
+{
+  "image": "clean/clean_09.png",
+  "fields": {
+    "firstName": "JAMIE",
+    "lastName": "HUGHES",
+    "dateOfBirth": "04.11.1951",
+    "expiryDate": "06.08.2034",
+    "licenceNumber": "HUGHE511104HDORSTQI86",
+    "addressLine": "53 VICTORIA ROAD, CARDIFF, BS83 1UY",
+    "categories": [
+      "B1",
+      "B",
+      "CE",
+      "D",
+      "h"
+    ]
+  }
+}

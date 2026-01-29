@@ -1,0 +1,15 @@
+{
+  "image": "medium/medium_06.png",
+  "fields": {
+    "firstName": "ELLIS",
+    "lastName": "WATSON",
+    "dateOfBirth": "09.11.1970",
+    "expiryDate": "27.11.2035",
+    "licenceNumber": "WATSO701109QU340ZEP79",
+    "addressLine": "76 MAIN STREET, SHEFFIELD, EH17J 8IS",
+    "categories": [
+      "B",
+      "q"
+    ]
+  }
+}

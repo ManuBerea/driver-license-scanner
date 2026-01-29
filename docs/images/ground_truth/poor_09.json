@@ -1,0 +1,16 @@
+{
+  "image": "poor/poor_09.png",
+  "fields": {
+    "firstName": "HARPER REESE",
+    "lastName": "WATSON",
+    "dateOfBirth": "16.02.1984",
+    "expiryDate": "11.06.2030",
+    "licenceNumber": "WATSO840216LMOYK9YS20",
+    "addressLine": "7 PARK AVENUE, HULL, WEST YORKSHIRE, YO17H 3PA",
+    "categories": [
+      "A1",
+      "B",
+      "h"
+    ]
+  }
+}

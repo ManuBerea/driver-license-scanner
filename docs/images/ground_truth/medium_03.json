@@ -1,0 +1,16 @@
+{
+  "image": "medium/medium_03.png",
+  "fields": {
+    "firstName": "MORGAN REESE",
+    "lastName": "JACKSON",
+    "dateOfBirth": "28.11.1993",
+    "expiryDate": "22.06.2029",
+    "licenceNumber": "JACKS9311286USAPM0V26",
+    "addressLine": "100 BRIDGE STREET, MANCHESTER, MERSEYSIDE, EH83A 8RG",
+    "categories": [
+      "A2",
+      "B",
+      "C1"
+    ]
+  }
+}

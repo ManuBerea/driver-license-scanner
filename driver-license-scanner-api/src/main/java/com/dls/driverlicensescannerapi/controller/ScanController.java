@@ -5,7 +5,6 @@ import com.dls.driverlicensescannerapi.dto.ErrorResponse;
 import com.dls.driverlicensescannerapi.dto.ScanResponse;
 import com.dls.driverlicensescannerapi.error.ErrorCatalog;
 import com.dls.driverlicensescannerapi.service.ScanService;
-import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;

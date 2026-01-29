@@ -1,0 +1,17 @@
+{
+  "image": "medium/medium_01.png",
+  "fields": {
+    "firstName": "RILEY ROWAN",
+    "lastName": "MILLER",
+    "dateOfBirth": "27.08.1965",
+    "expiryDate": "13.11.2031",
+    "licenceNumber": "MILLE650827KKRSXHBT62",
+    "addressLine": "113 KINGSWAY, BRISTOL, B97G 6IQ",
+    "categories": [
+      "B1",
+      "B",
+      "D",
+      "k"
+    ]
+  }
+}
