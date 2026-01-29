@@ -1,6 +1,6 @@
 # OCR Engine Comparison Report
 
-Generated: 2026-01-28T10:00:36.282101500Z
+Generated: 2026-01-28T13:44:30.288578900Z
 
 Total samples: 30
 
@@ -11,8 +11,8 @@ Total samples: 30
 | Metric | Value |
 | --- | --- |
 | Required-field accuracy | 73.3% (FAIL) |
-| Median scan-form time | 2369 ms (PASS) |
-| P95 scan-form time | 10204 ms |
+| Median scan-form time | 1690 ms (PASS) |
+| P95 scan-form time | 2302 ms |
 | % scans < 0.70 confidence | 0.0% |
 | Samples | 10 |
 | OCR failures | 0 |
@@ -41,8 +41,8 @@ Total samples: 30
 | Metric | Value |
 | --- | --- |
 | Required-field accuracy | 90.0% (PASS) |
-| Median scan-form time | 2092 ms (PASS) |
-| P95 scan-form time | 2207 ms |
+| Median scan-form time | 1805 ms (PASS) |
+| P95 scan-form time | 2032 ms |
 | % scans < 0.70 confidence | 0.0% |
 | Samples | 10 |
 | OCR failures | 0 |
@@ -67,8 +67,8 @@ Total samples: 30
 | Metric | Value |
 | --- | --- |
 | Required-field accuracy | 0.0% (FAIL) |
-| Median scan-form time | 2069 ms (PASS) |
-| P95 scan-form time | 2865 ms |
+| Median scan-form time | 1649 ms (PASS) |
+| P95 scan-form time | 2017 ms |
 | % scans < 0.70 confidence | 100.0% |
 | Samples | 10 |
 | OCR failures | 0 |
@@ -97,8 +97,8 @@ Total samples: 30
 | Metric | Value |
 | --- | --- |
 | Required-field accuracy | 54.4% (FAIL) |
-| Median scan-form time | 2097 ms (PASS) |
-| P95 scan-form time | 3194 ms |
+| Median scan-form time | 1720 ms (PASS) |
+| P95 scan-form time | 2032 ms |
 | % scans < 0.70 confidence | 33.3% |
 | Samples | 30 |
 | OCR failures | 0 |
@@ -129,8 +129,8 @@ Total samples: 30
 | Metric | Value |
 | --- | --- |
 | Required-field accuracy | 86.7% (PASS) |
-| Median scan-form time | 439 ms (PASS) |
-| P95 scan-form time | 924 ms |
+| Median scan-form time | 455 ms (PASS) |
+| P95 scan-form time | 1615 ms |
 | % scans < 0.70 confidence | 0.0% |
 | Samples | 10 |
 | OCR failures | 0 |
@@ -156,8 +156,8 @@ Total samples: 30
 | Metric | Value |
 | --- | --- |
 | Required-field accuracy | 83.3% (FAIL) |
-| Median scan-form time | 491 ms (PASS) |
-| P95 scan-form time | 550 ms |
+| Median scan-form time | 531 ms (PASS) |
+| P95 scan-form time | 783 ms |
 | % scans < 0.70 confidence | 0.0% |
 | Samples | 10 |
 | OCR failures | 0 |
@@ -183,8 +183,8 @@ Total samples: 30
 | Metric | Value |
 | --- | --- |
 | Required-field accuracy | 35.0% (FAIL) |
-| Median scan-form time | 535 ms (PASS) |
-| P95 scan-form time | 612 ms |
+| Median scan-form time | 529 ms (PASS) |
+| P95 scan-form time | 589 ms |
 | % scans < 0.70 confidence | 30.0% |
 | Samples | 10 |
 | OCR failures | 0 |
@@ -213,8 +213,8 @@ Total samples: 30
 | Metric | Value |
 | --- | --- |
 | Required-field accuracy | 68.3% (FAIL) |
-| Median scan-form time | 484 ms (PASS) |
-| P95 scan-form time | 612 ms |
+| Median scan-form time | 518 ms (PASS) |
+| P95 scan-form time | 783 ms |
 | % scans < 0.70 confidence | 10.0% |
 | Samples | 30 |
 | OCR failures | 0 |

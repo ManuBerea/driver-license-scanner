@@ -114,7 +114,8 @@ export function PreviewPanel({
       });
     }
 
-    const licencePattern = /^[A-Z]{5}\d{6}[A-Z]{2}\d[A-Z]{2}\d{0,2}$/;
+    const licencePattern =
+      /^(?:[A-Z9]{5}\d(?:0[1-9]|1[0-2]|5[1-9]|6[0-2])(?:0[1-9]|[12]\d|3[01])\d[A-Z][A-Z9]\d[A-Z0-9]{2}(?:\d{2})?|\d{8})$/i;
     if (trimmed.licenceNumber) {
       const normalized = trimmed.licenceNumber.replace(/\s+/g, "").toUpperCase();
       if (!licencePattern.test(normalized)) {

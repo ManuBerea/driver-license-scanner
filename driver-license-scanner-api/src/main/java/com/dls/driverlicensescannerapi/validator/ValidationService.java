@@ -25,8 +25,24 @@ public class ValidationService {
     private static final Pattern POSTCODE_PATTERN =
             Pattern.compile("\\b[A-Z]{1,2}\\d[A-Z\\d]? ?\\d[A-Z]{2}\\b", Pattern.CASE_INSENSITIVE);
 
-    private static final Pattern LICENCE_NUMBER_PATTERN =
-            Pattern.compile("^[A-Z]{5}\\d{6}[A-Z]{2}\\d[A-Z]{2}\\d{0,2}$");
+    private static final Pattern UK_LICENCE_PATTERN = Pattern.compile(
+            "^(?:" +
+                    // GB (DVLA) driver number (16) + optional 2-digit issue number
+                    "[A-Z9]{5}" +                              // surname (pad with 9)
+                    "\\d" +                                    // decade digit
+                    "(?:0[1-9]|1[0-2]|5[1-9]|6[0-2])" +        // month 01-12 or female 51-62
+                    "(?:0[1-9]|[12]\\d|3[01])" +               // day 01-31
+                    "\\d" +                                    // year digit
+                    "[A-Z][A-Z9]" +                            // initials (2nd can be 9)
+                    "\\d" +                                    // arbitrary digit
+                    "[A-Z0-9]{2}" +                            // check chars
+                    "(?:\\d{2})?" +                            // optional issue number
+                    "|" +
+                    // NI (DVA) 8-digit driver number
+                    "\\d{8}" +
+                    ")$",
+            Pattern.CASE_INSENSITIVE
+    );
 
     public ValidationResult validate(LicenseFields fields) {
         List<ValidationError> blockingErrors = new ArrayList<>();
@@ -109,7 +125,7 @@ public class ValidationService {
             return;
         }
         String normalized = licenceNumber.replaceAll("\\s+", "").toUpperCase(Locale.UK);
-        if (!LICENCE_NUMBER_PATTERN.matcher(normalized).matches()) {
+        if (!UK_LICENCE_PATTERN.matcher(normalized).matches()) {
             blockingErrors.add(new ValidationError(
                     "INVALID_LICENCE_NUMBER",
                     "licenceNumber",

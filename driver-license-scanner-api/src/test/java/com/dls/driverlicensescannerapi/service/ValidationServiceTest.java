@@ -88,7 +88,7 @@ class ValidationServiceTest {
                 .withLastName("CAMPBELL")
                 .withDateOfBirth(dob)
                 .withAddressLine("123 CASTLEROCK ROAD, COLERAINE, BT51 3TB")
-                .withLicenceNumber("SMITH801201AB1CD")
+                .withLicenceNumber("SMITH811052A93AB")
                 .withExpiryDate(expiry);
     }
 

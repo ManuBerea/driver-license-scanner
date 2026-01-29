@@ -362,7 +362,7 @@
       "mismatches": {
         "addressLine": {
           "expected": "150 STATION ROAD, HULL, NORFOLK, B34E 0LH",
-          "actual": "150 STATION ROAD, HULL, NORFOLK, R3AE 0LH"
+          "actual": "150 STATION ROAD, HULL, NORFOLK, R 3 AE 0 LH"
         }
       },
       "expected": {
@@ -383,7 +383,7 @@
         "firstName": "TAYLOR REESE",
         "lastName": "MARTIN",
         "dateOfBirth": "13.07.1983",
-        "addressLine": "150 STATION ROAD, HULL, NORFOLK, R3AE 0LH",
+        "addressLine": "150 STATION ROAD, HULL, NORFOLK, R 3 AE 0 LH",
         "licenceNumber": "MARTI83071315RZI5ID90",
         "expiryDate": "12.02.2033",
         "categories": []

@@ -7,7 +7,10 @@ import java.util.regex.Pattern;
 
 final class AddressAssembler {
     private static final Pattern POSTCODE_COMPACT_PATTERN =
-            Pattern.compile("^[A-Z]{1,2}\\d[A-Z\\d]{0,2}\\d[A-Z]{2}$", Pattern.CASE_INSENSITIVE);
+            Pattern.compile(
+                    "^(?:[A-Z]\\d{1,2}[A-Z]?|[A-Z]{2}\\d{1,2}[A-Z]?)(?:\\d[A-Z]{2})$",
+                    Pattern.CASE_INSENSITIVE
+            );
     private static final Pattern MONTH_STAMP_PATTERN =
             Pattern.compile("^(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|SEPT|OCT|NOV|DEC)\\s?\\d{2}$",
                     Pattern.CASE_INSENSITIVE);
